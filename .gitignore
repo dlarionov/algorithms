@@ -1,5 +1,4 @@
 *.bak
-/Part I/01 - Percolation/src/EclipseCompiler.txt
-/Part I/01 - Percolation/src/*.java~
-/Part I/01 - Percolation/test/EclipseCompiler.txt
-/Part I/01 - Percolation/src/*.class
+EclipseCompiler.txt
+*.java~
+*.class
