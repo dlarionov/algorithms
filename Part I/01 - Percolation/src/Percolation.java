@@ -101,7 +101,7 @@ public class Percolation {
   public boolean percolates()
   {
     if (dimension == 1)
-      return isOpen(1,1);
+      return isOpen(1, 1);
     
     return  connections.connected(0, lastSite);
   }
