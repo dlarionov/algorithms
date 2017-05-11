@@ -2,3 +2,4 @@
 EclipseCompiler.txt
 *.java~
 *.class
+/Part I/01 - Percolation/test/*.png
