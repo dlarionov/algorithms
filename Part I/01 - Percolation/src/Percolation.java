@@ -3,12 +3,13 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Percolation {
   
+  private int dim;
   private boolean[][] states;  
-  private WeightedQuickUnionUF connections;  
+  private WeightedQuickUnionUF data1;
+  private WeightedQuickUnionUF data2; 
   private int totalSites;
   private int openSites;
-  private int lastSite;
-  private int dimension;
+  private int lastSite;  
   
   // create n-by-n grid, with all sites blocked
   public Percolation(int n)
@@ -16,32 +17,34 @@ public class Percolation {
     if (n  <  1)
       throw new java.lang.IllegalArgumentException();
     
-    dimension = n;
+    dim = n;
     states = new boolean[n][n];    
     totalSites = n*n;
     openSites = 0;
-    // create structure with two additional virtual elements: 0 and lastSite
-    connections = new WeightedQuickUnionUF(totalSites+2);
+    // create two additional virtual elements: 0 and lastSite
+    data1 = new WeightedQuickUnionUF(totalSites+2);
+    data2 = new WeightedQuickUnionUF(totalSites+1);
     lastSite = totalSites+2-1;
     for (int i = 1; i <= n; i++)
     {
       // connect top row with first element
-      connections.union(0, i);
+      data1.union(0, i);
+      data2.union(0, i);
       // connect bottom row with last element
-      connections.union(lastSite, lastSite-i);
+      data1.union(lastSite, lastSite-i);
     }
   }
   
   private int getSite(int row, int col)
   {
     // first element is 1 (0 and lastSite are virtual elements)
-    return (row-1)*dimension + col;
+    return (row-1)*dim + col;
   }
   
   // open site (row, col) if it is not open already 
   public void open(int row, int col)
   {
-    if (row < 1 || col < 1 || row > dimension || col > dimension)
+    if (row < 1 || col < 1 || row > dim || col > dim)
       throw new java.lang.IndexOutOfBoundsException();
     
     int i = row-1;
@@ -54,29 +57,41 @@ public class Percolation {
     openSites++;
     
     int x = getSite(row, col);
-    int n = dimension;
+    int n = dim;
     
     // top
     if (i > 0 && states[i-1][j])
-      connections.union(x, x-n);    
+    {
+      data1.union(x, x-n);
+      data2.union(x, x-n);
+    }
     
     // right
     if (j < n-1 && states[i][j+1])
-      connections.union(x, x+1);
+    {
+      data1.union(x, x+1);
+      data2.union(x, x+1);
+    }
     
     // bottom
-    if (i < n-1 && states[i+1][j])    
-      connections.union(x, x+n);
+    if (i < n-1 && states[i+1][j])
+    {
+      data1.union(x, x+n);
+      data2.union(x, x+n);
+    }
     
     // left
-    if (j > 0 && states[i][j-1])    
-      connections.union(x, x-1);  
+    if (j > 0 && states[i][j-1])
+    {
+      data1.union(x, x-1);
+      data2.union(x, x-1);
+    }
   }
   
   // is site (row, col) open?
   public boolean isOpen(int row, int col)
   {
-    if (row < 1 || col < 1 || row > dimension || col > dimension)
+    if (row < 1 || col < 1 || row > dim || col > dim)
       throw new java.lang.IndexOutOfBoundsException();
     
     return states[row-1][col-1];
@@ -85,10 +100,10 @@ public class Percolation {
   // is site (row, col) full?
   public boolean isFull(int row, int col)
   {
-    if (row < 1 || col < 1 || row > dimension || col > dimension)
+    if (row < 1 || col < 1 || row > dim || col > dim)
       throw new java.lang.IndexOutOfBoundsException();
     
-    return states[row-1][col-1] && connections.connected(0, getSite(row, col));
+    return states[row-1][col-1] && data2.connected(0, getSite(row, col));
   }
   
   // number of open sites
@@ -100,10 +115,10 @@ public class Percolation {
   // does the system percolate?
   public boolean percolates()
   {
-    if (dimension == 1)
+    if (dim == 1)
       return isOpen(1, 1);
     
-    return  connections.connected(0, lastSite);
+    return  data1.connected(0, lastSite);
   }
   
   public static void main(String[] args)
