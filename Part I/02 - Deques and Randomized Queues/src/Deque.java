@@ -22,10 +22,8 @@ public class Deque<Item> implements Iterable<Item>
   
   public void addFirst(Item item)
   {
-    if (item == null)
-    {
-      throw new java.lang.NullPointerException();
-    }
+    if (item == null)    
+      throw new java.lang.NullPointerException();    
     
     Node node = new Node();
     node.item = item;
@@ -46,10 +44,8 @@ public class Deque<Item> implements Iterable<Item>
   
   public void addLast(Item item)
   {
-    if (item == null)
-    {
-      throw new java.lang.NullPointerException();
-    }
+    if (item == null)    
+      throw new java.lang.NullPointerException();    
     
     Node node = new Node();
     node.item = item;
@@ -70,11 +66,9 @@ public class Deque<Item> implements Iterable<Item>
   
   public Item removeFirst()
   {
-    if (first == null)
-    {
+    if (first == null)    
       throw new java.util.NoSuchElementException();
-    }
-    
+        
     Node node = first;
     if (first.next == null)
     {
@@ -94,9 +88,7 @@ public class Deque<Item> implements Iterable<Item>
   public Item removeLast()
   {
     if (first == null)
-    {
-      throw new java.util.NoSuchElementException();
-    }
+      throw new java.util.NoSuchElementException();    
     
     Node node = last;
     if (first.next == null)
@@ -118,22 +110,15 @@ public class Deque<Item> implements Iterable<Item>
   
   private class DequeIterator implements Iterator<Item>
   {
-    private Node current = first;
-    
-    public boolean hasNext() { return current != null; }
-    
-    public void remove() 
-    {
-      throw new java.lang.UnsupportedOperationException();
-    }
+    private Node current = first;    
+    public boolean hasNext() { return current != null; }    
+    public void remove() { throw new java.lang.UnsupportedOperationException(); }
     
     public Item next()
     {
       Item item = current.item;
-      if (current.next == null)
-      {
-        throw new java.util.NoSuchElementException();
-      }      
+      if (current.next == null)      
+        throw new java.util.NoSuchElementException();           
       current = current.next;
       return item;
     }
