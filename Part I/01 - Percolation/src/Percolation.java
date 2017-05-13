@@ -1,8 +1,8 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.algs4.StdOut;
 
-public class Percolation {
-  
+public class Percolation
+{
   private int dim;
   private boolean[][] states;  
   private WeightedQuickUnionUF data1;
