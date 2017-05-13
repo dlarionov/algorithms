@@ -75,8 +75,10 @@ public class RandomizedQueue<Item> implements Iterable<Item>
       items = (Item[])new Object[size];
       for (int i = 0; i < size; i++)
       {
-        items[i] = arr[i]; // TODO random here
+        items[i] = arr[i];
       }
+      
+      StdRandom.shuffle(items);
     }
     
     public boolean hasNext() { return current < items.length; }
