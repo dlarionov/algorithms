@@ -9,7 +9,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
   
   public RandomizedQueue()
   {
-     arr = (Item[])new Object[4];
+     arr = (Item[]) new Object[4];
   }
   
   public boolean isEmpty() { return size == 0; }
@@ -17,7 +17,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
   
   private void resize(int capacity)
   {
-    Item[] copy = (Item[])new Object[capacity];
+    Item[] copy = (Item[]) new Object[capacity];
     for (int i = 0; i < size; i++)
     {
       copy[i] = arr[i];
@@ -72,7 +72,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
     
     public RandomizedQueueIterator()
     {
-      items = (Item[])new Object[size];
+      items = (Item[]) new Object[size];
       for (int i = 0; i < size; i++)
       {
         items[i] = arr[i];

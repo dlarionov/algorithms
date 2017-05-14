@@ -9,12 +9,12 @@ public class Deque<Item> implements Iterable<Item>
   
   private class Node
   {
-    Item item;
-    Node next;
-    Node prev;
+    private Item item;
+    private Node next;
+    private Node prev;
   }
   
-  public Deque() {}
+  public Deque() { }
   
   public boolean isEmpty() { return first == null; }
   
@@ -116,9 +116,10 @@ public class Deque<Item> implements Iterable<Item>
     
     public Item next()
     {
-      Item item = current.item;
-      if (current.next == null)      
-        throw new java.util.NoSuchElementException();           
+      if (current == null)      
+        throw new java.util.NoSuchElementException();
+      
+      Item item = current.item;               
       current = current.next;
       return item;
     }
@@ -127,10 +128,10 @@ public class Deque<Item> implements Iterable<Item>
   public static void main(String[] args)
   {
     Deque<Integer> deck = new Deque<Integer>();
-    deck.addFirst(5);
-    deck.addFirst(4);
-    deck.addLast(6);
-    StdOut.println(deck.removeFirst());
-    StdOut.println(deck.removeLast());
+    deck.addFirst(1);
+    for (int i : deck)
+    {
+      StdOut.print(i);
+    }
   }
 }
