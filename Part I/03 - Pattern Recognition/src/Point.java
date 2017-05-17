@@ -79,6 +79,6 @@ public class Point implements Comparable<Point>
 
     public static void main(String[] args) 
     {
-        StdOut.println(new Point(0, 10000).compareTo(new Point(10000, 0)));
+        StdOut.println(new Point(3000, 7000).slopeTo(new Point(7000, 4000)));
     }
 }

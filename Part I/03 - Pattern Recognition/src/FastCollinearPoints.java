@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.StdOut;
 
-public class BruteCollinearPoints
+public class FastCollinearPoints
 {   
     private ArrayList<LineSegment> list = new ArrayList<LineSegment>();    
     
@@ -33,7 +33,7 @@ public class BruteCollinearPoints
         return false;
     }
     
-    public BruteCollinearPoints(Point[] points)
+    public FastCollinearPoints(Point[] points)
     {
         if (points == null)
             throw new java.lang.NullPointerException();
@@ -48,33 +48,17 @@ public class BruteCollinearPoints
         if (N < 4)
             return;
         
-        Point[] line = new Point[4];   
-        for (int i = 0; i < N; i++)
+        for (int i = 0; i < N-3; i++)
         {
-            line[0] = points[i];        
+            Point p = points[i];
+            double[] slaps = new double[N-1-i];
             for (int j = i+1; j < N; j++)
             {
-                line[1] = points[j];
-                double pq = line[1].slopeTo(line[0]);
-                for (int k = j+1; k < N; k++)
-                {
-                    line[2] = points[k];
-                    double qr = line[1].slopeTo(line[2]);
-                    if (pq == qr)
-                    {
-                        for (int l = k+1; l < N; l++)
-                        {
-                            line[3] = points[l];
-                            double rs = line[2].slopeTo(line[3]);
-                            if (qr == rs)
-                            {
-                                Arrays.sort(line);                          
-                                list.add(new LineSegment(line[0], line[3]));
-                            }
-                        }
-                    }
-                }
+                Point q = points[j];
+                slaps[j-1-i] = p.slapTo(q);
             }
+            Arrays.sort(slaps);
+            slaps = new double[N-i];
         }
     }
     
