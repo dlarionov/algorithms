@@ -1,12 +1,12 @@
 import java.util.Arrays;
+// import java.util.*;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 public class BruteCollinearPoints
 {
-    private LineSegment[] res;
-    private int size;
+    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();    
     
     public BruteCollinearPoints(Point[] points)
     {
@@ -36,7 +36,9 @@ public class BruteCollinearPoints
             a = b;
         }
         
-        res = new LineSegment[2];
+        if (N < 4)
+            return;
+        
         Point[] line = new Point[4];      
         for (int i = 0; i < N; i++)
         {
@@ -58,9 +60,7 @@ public class BruteCollinearPoints
                             if (qr == rs)
                             {
                                 Arrays.sort(line);
-                                if (res.length == size)
-                                    res = Arrays.copyOf(res, 2 * res.length);
-                                res[size++] = new LineSegment(line[0], line[3]);
+                                list.add(new LineSegment(line[0], line[3]));
                             }              
                         }
                     }
@@ -71,12 +71,12 @@ public class BruteCollinearPoints
     
     public int numberOfSegments()
     {
-        return size;
+        return list.size();
     }
     
     public LineSegment[] segments()
     {
-        return res;
+        return list.toArray(new LineSegment[list.size()]);
     }
     
     public static void main(String[] args) 
