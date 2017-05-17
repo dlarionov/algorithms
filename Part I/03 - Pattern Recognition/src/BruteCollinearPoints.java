@@ -1,11 +1,49 @@
 import java.util.Arrays;
-// import java.util.*;
+import java.util.ArrayList;
+
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 public class BruteCollinearPoints
 {
+    public static void main(String[] args) 
+    {
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++)
+        {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+        
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        StdDraw.setPenRadius(0.02);
+        StdDraw.setPenColor(StdDraw.RED);
+        for (Point p : points) 
+        {
+            p.draw();
+        }
+        StdDraw.show();
+        
+        // print and draw the line segments
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        StdDraw.setPenRadius(0.005);
+        StdDraw.setPenColor(StdDraw.GRAY);
+        for (LineSegment segment : collinear.segments()) 
+        {
+            // StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
+    }
+    
     private ArrayList<LineSegment> list = new ArrayList<LineSegment>();    
     
     public BruteCollinearPoints(Point[] points)
@@ -22,7 +60,7 @@ public class BruteCollinearPoints
                 throw new java.lang.NullPointerException();
         }
             
-        // union duplicates
+        // move duplicates next to each other
         Arrays.sort(points);
         
         // if the array contains a repeated point
@@ -30,16 +68,15 @@ public class BruteCollinearPoints
         for (int i = 1; i < N; i++)
         {
             Point b = points[i];            
-            if (a.compareTo(b) == 0)
-                throw new java.lang.IllegalArgumentException();
-            
+            if (a == b) // (a.compareTo(b) == 0)
+                throw new java.lang.IllegalArgumentException();            
             a = b;
         }
         
         if (N < 4)
             return;
         
-        Point[] line = new Point[4];      
+        Point[] line = new Point[4];   
         for (int i = 0; i < N; i++)
         {
             line[0] = points[i];        
@@ -59,7 +96,7 @@ public class BruteCollinearPoints
                             double rs = line[2].slopeTo(line[3]);
                             if (qr == rs)
                             {
-                                Arrays.sort(line);
+                                Arrays.sort(line);                                
                                 list.add(new LineSegment(line[0], line[3]));
                             }              
                         }
@@ -67,7 +104,7 @@ public class BruteCollinearPoints
                 }
             }
         }
-    }
+    }    
     
     public int numberOfSegments()
     {
@@ -77,35 +114,5 @@ public class BruteCollinearPoints
     public LineSegment[] segments()
     {
         return list.toArray(new LineSegment[list.size()]);
-    }
-    
-    public static void main(String[] args) 
-    {
-        // read the n points from a file
-        In in = new In(args[0]);
-        int n = in.readInt();
-        Point[] points = new Point[n];
-        for (int i = 0; i < n; i++) {
-            int x = in.readInt();
-            int y = in.readInt();
-            points[i] = new Point(x, y);
-        }
-        
-        // draw the points
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(0, 32768);
-        StdDraw.setYscale(0, 32768);
-        for (Point p : points) {
-            p.draw();
-        }
-        StdDraw.show();
-        
-        // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-        for (LineSegment segment : collinear.segments()) {
-            StdOut.println(segment);
-            segment.draw();
-        }
-        StdDraw.show();
     }
 }

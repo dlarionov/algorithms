@@ -25,28 +25,34 @@ public class Point implements Comparable<Point>
 
     public double slopeTo(Point that) 
     {
+        double r;        
         if (that.x == this.x)
         {
           if (that.y == this.y)
           {
-             return Double.NEGATIVE_INFINITY; 
+             r = Double.NEGATIVE_INFINITY; 
           }
           else
           {
-              return Double.POSITIVE_INFINITY;
+              r = Double.POSITIVE_INFINITY;
           }
         }
-        
-        return (that.y - this.y) / (that.x - this.x);
+        else
+        {
+            r = (double)(that.y - this.y) / (that.x - this.x);
+        }        
+        return r;
     }
 
     public int compareTo(Point that) 
     {
-        if (this.y < that.y) return -1;
-        else if (this.y < that.y) return 1;
-        else if (this.x < that.x) return -1;
-        else if (this.x > that.x) return 1;
-        else return 0;
+        int r;        
+        if (this.y < that.y) r = -1;
+        else if (this.y > that.y) r = 1;
+        else if (this.x < that.x) r = -1;
+        else if (this.x > that.x) r = 1;
+        else r = 0;        
+        return r;
     }
 
     public Comparator<Point> slopeOrder() 
@@ -73,9 +79,6 @@ public class Point implements Comparable<Point>
 
     public static void main(String[] args) 
     {
-        Point p = new Point(1, 1);
-        StdOut.println(p.toString());
-        StdOut.println(p.compareTo(new Point(2, 1)));
-        StdOut.println(p.slopeTo(new Point(1, 1)));
+        StdOut.println(new Point(0, 10000).compareTo(new Point(10000, 0)));
     }
 }
