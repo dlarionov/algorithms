@@ -6,44 +6,33 @@ public class Point implements Comparable<Point>
 {
     private final int x;
     private final int y;
-
+    
     public Point(int x, int y) 
     {
         this.x = x;
         this.y = y;
     }
-
+    
     public void draw() 
     {
         StdDraw.point(x, y);
     }
-
+    
     public void drawTo(Point that) 
     {
         StdDraw.line(this.x, this.y, that.x, that.y);
     }
-
+    
     public double slopeTo(Point that) 
     {
-        double r;        
-        if (that.x == this.x)
-        {
-          if (that.y == this.y)
-          {
-             r = Double.NEGATIVE_INFINITY; 
-          }
-          else
-          {
-              r = Double.POSITIVE_INFINITY;
-          }
-        }
-        else
-        {
-            r = (double)(that.y - this.y) / (that.x - this.x);
-        }        
+        double r;
+        if (that.x == this.x && that.y == this.y) r = Double.NEGATIVE_INFINITY;
+        else if (that.x == this.x) r = Double.POSITIVE_INFINITY;
+        else if (that.y == this.y) r = 0;
+        else r = (double) (that.y - this.y) / (that.x - this.x);        
         return r;
     }
-
+    
     public int compareTo(Point that) 
     {
         int r;        
@@ -54,7 +43,7 @@ public class Point implements Comparable<Point>
         else r = 0;        
         return r;
     }
-
+    
     public Comparator<Point> slopeOrder() 
     {
         return new SlopeComparator();
@@ -64,21 +53,17 @@ public class Point implements Comparable<Point>
     {
         public int compare(Point a, Point b)
         {
-            double x = Point.this.slopeTo(a);
-            double y = Point.this.slopeTo(b);
-            if (x < y)  return -1;
-            else if (x > y) return 1;
-            else return 0;
+            return Double.compare(slopeTo(a), slopeTo(b));
         }
     }
-
+    
     public String toString()
     {
         return "(" + x + ", " + y + ")";
     }
-
+    
     public static void main(String[] args) 
     {
-        StdOut.println(new Point(3000, 7000).slopeTo(new Point(7000, 4000)));
+        StdOut.println(new Point(280, 124).slopeTo(new Point(165, 124)));
     }
 }
