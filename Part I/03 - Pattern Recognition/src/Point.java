@@ -64,10 +64,10 @@ public class Point implements Comparable<Point>
     {
         public int compare(Point a, Point b)
         {
-            double slopeA = slopeTo(a);
-            double slopeB = slopeTo(b);
-            if (slopeA < slopeB)  return -1;
-            else if (slopeA > slopeB) return 1;
+            double x = Point.this.slopeTo(a);
+            double y = Point.this.slopeTo(b);
+            if (x < y)  return -1;
+            else if (x > y) return 1;
             else return 0;
         }
     }

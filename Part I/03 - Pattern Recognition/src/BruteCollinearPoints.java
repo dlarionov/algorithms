@@ -1,6 +1,6 @@
 import java.util.Arrays;
 import java.util.ArrayList;
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 
 public class BruteCollinearPoints
 {   

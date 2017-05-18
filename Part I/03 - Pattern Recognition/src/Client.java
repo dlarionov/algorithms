@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 public class Client
@@ -32,7 +31,7 @@ public class Client
         // print and draw the line segments
         StdDraw.setPenRadius(0.005);
         StdDraw.setPenColor(StdDraw.GRAY);
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        FastCollinearPoints collinear = new FastCollinearPoints(points);
         for (LineSegment segment : collinear.segments())
         {
             segment.draw();

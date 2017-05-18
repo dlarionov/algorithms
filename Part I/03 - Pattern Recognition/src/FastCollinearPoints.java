@@ -48,17 +48,40 @@ public class FastCollinearPoints
         if (N < 4)
             return;
         
-        for (int i = 0; i < N-3; i++)
+        Point[] copy = Arrays.copyOf(points, points.length);
+        for (int i = 0; i < N; i++)
         {
             Point p = points[i];
-            double[] slaps = new double[N-1-i];
-            for (int j = i+1; j < N; j++)
+            Arrays.sort(copy, p.slopeOrder());
+            
+            // copy[0] is -Infiniy
+            double prev = p.slopeTo(copy[1]);
+            for (int j = 2, k = 1; j < N; j++)
             {
-                Point q = points[j];
-                slaps[j-1-i] = p.slapTo(q);
+                double next = p.slopeTo(copy[j]);
+                if (prev == next)
+                {
+                    k++;
+                }
+                else
+                {
+                    if (k >= 3)
+                    {
+                        Point[] line = new Point[k+1];
+                        line[0] = p;
+                        while (k > 0)
+                        {
+                            line[k] = copy[j-k];
+                            k--;
+                        }
+                        Arrays.sort(line);
+                        list.add(new LineSegment(line[0], line[line.length-1]));
+                    }
+                    
+                    k = 1;
+                    prev = next;
+                }
             }
-            Arrays.sort(slaps);
-            slaps = new double[N-i];
         }
     }
     
