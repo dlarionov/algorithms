@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FastCollinearPoints
 {   
-    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();    
+    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();
     
     public FastCollinearPoints(Point[] points)
     {
@@ -13,14 +13,14 @@ public class FastCollinearPoints
         
         if (hasNulls(points))
             throw new java.lang.NullPointerException();
-       
-        Point[] copy = Arrays.copyOf(points, points.length);
-        if (hasDuplicates(copy))
+        
+        if (hasDuplicates(points))
             throw new java.lang.IllegalArgumentException();
         
         if (points.length < 4)
             return;
         
+        Point[] copy = Arrays.copyOf(points, points.length);
         for (int i = 0; i < points.length; i++)
         {
             Point p = points[i];
@@ -29,8 +29,8 @@ public class FastCollinearPoints
             double prev = p.slopeTo(copy[1]);
             for (int j = 2, k = 1; j < copy.length; j++)
             {
-                double next = p.slopeTo(copy[j]);                
-                if (prev == next)
+                double next = p.slopeTo(copy[j]);
+                if (equals(prev, next))
                 {
                     k++;
                 }
@@ -66,9 +66,17 @@ public class FastCollinearPoints
         return list.toArray(new LineSegment[list.size()]);
     }
     
+    private static boolean equals(final double a, final double b)
+    {
+        if (a == b) 
+            return true;
+        
+        return Math.abs(a - b) < 0.0000001d;
+    }
+    
     private static boolean hasNulls(Object[] arr)
     {
-        for(Object obj : arr)
+        for (Object obj : arr)
         {
             if (obj == null)
                 return true;
@@ -76,19 +84,20 @@ public class FastCollinearPoints
         return false;
     }
     
-    private static boolean hasDuplicates(Point[] arr)
+    private static boolean hasDuplicates(Point[] points)
     {
-        if (arr.length < 2)
+        if (points.length < 2)
             return false;
         
-        Arrays.sort(arr);
+        Point[] copy = Arrays.copyOf(points, points.length);
+        Arrays.sort(copy);
         
-        Point a = arr[0];
-        for (int i = 1; i < arr.length; i++)
+        Point a = copy[0];
+        for (int i = 1; i < copy.length; i++)
         {
-            Point b = arr[i];            
+            Point b = copy[i];
             if (a.compareTo(b) == 0)
-                return true;           
+                return true;
             a = b;
         }
         return false;

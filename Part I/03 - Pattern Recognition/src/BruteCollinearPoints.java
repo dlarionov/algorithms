@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class BruteCollinearPoints
 {   
-    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();    
+    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();
     
     public BruteCollinearPoints(Point[] points)
     {
@@ -14,34 +14,30 @@ public class BruteCollinearPoints
         if (hasNulls(points))
             throw new java.lang.NullPointerException();
        
-        if (hasDuplicates(Arrays.copyOf(points, points.length)))
+        if (hasDuplicates(points))
             throw new java.lang.IllegalArgumentException();
         
         if (points.length < 4)
             return;
         
-        Point[] line = new Point[4];   
         for (int i = 0; i < points.length; i++)
         {
-            line[0] = points[i];        
             for (int j = i+1; j < points.length; j++)
             {
-                line[1] = points[j];
-                double pq = line[1].slopeTo(line[0]);
+                double ij = points[i].slopeTo(points[j]);
                 for (int k = j+1; k < points.length; k++)
                 {
-                    line[2] = points[k];
-                    double qr = line[1].slopeTo(line[2]);
-                    if (pq == qr)
+                    double jk = points[j].slopeTo(points[k]);
+                    if (equals(ij, jk))
                     {
                         for (int l = k+1; l < points.length; l++)
                         {
-                            line[3] = points[l];
-                            double rs = line[2].slopeTo(line[3]);
-                            if (qr == rs)
+                            double kl = points[k].slopeTo(points[l]);
+                            if (equals(jk, kl))
                             {
-                                Arrays.sort(line);                          
-                                list.add(new LineSegment(line[0], line[3]));
+                                Point[] arr = new Point[] { points[i], points[j], points[k], points[l] };
+                                Arrays.sort(arr);
+                                list.add(new LineSegment(arr[0], arr[3]));
                             }
                         }
                     }
@@ -60,9 +56,17 @@ public class BruteCollinearPoints
         return list.toArray(new LineSegment[list.size()]);
     }
     
+    private static boolean equals(final double a, final double b) 
+    {
+        if (a == b) 
+            return true;
+        
+        return Math.abs(a - b) < 0.0000001d;
+    }
+    
     private static boolean hasNulls(Object[] arr)
     {
-        for(Object obj : arr)
+        for (Object obj : arr)
         {
             if (obj == null)
                 return true;
@@ -70,19 +74,20 @@ public class BruteCollinearPoints
         return false;
     }
     
-    private static boolean hasDuplicates(Point[] arr)
+    private static boolean hasDuplicates(Point[] points)
     {
-        if (arr.length < 2)
+        if (points.length < 2)
             return false;
         
-        Arrays.sort(arr);
+        Point[] copy = Arrays.copyOf(points, points.length);
+        Arrays.sort(copy);
         
-        Point a = arr[0];
-        for (int i = 1; i < arr.length; i++)
+        Point a = copy[0];
+        for (int i = 1; i < copy.length; i++)
         {
-            Point b = arr[i];
+            Point b = copy[i];
             if (a.compareTo(b) == 0)
-                return true;           
+                return true;
             a = b;
         }
         return false;
