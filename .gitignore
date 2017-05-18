@@ -2,5 +2,3 @@
 EclipseCompiler.txt
 *.java~
 *.class
-/Part I/01 - Percolation/test/*.png
-/Part I/03 - Pattern Recognition/test/*.png
