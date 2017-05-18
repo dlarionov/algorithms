@@ -14,13 +14,13 @@ public class FastCollinearPoints
         if (hasNulls(points))
             throw new java.lang.NullPointerException();
        
-        if (hasDuplicates(points))
+        Point[] copy = Arrays.copyOf(points, points.length);
+        if (hasDuplicates(copy))
             throw new java.lang.IllegalArgumentException();
         
         if (points.length < 4)
             return;
         
-        Point[] copy = Arrays.copyOf(points, points.length);
         for (int i = 0; i < points.length; i++)
         {
             Point p = points[i];
@@ -66,11 +66,11 @@ public class FastCollinearPoints
         return list.toArray(new LineSegment[list.size()]);
     }
     
-    private static boolean hasNulls(Point[] arr)
+    private static boolean hasNulls(Object[] arr)
     {
-        for (int i = 0; i < arr.length; i++)
+        for(Object obj : arr)
         {
-            if (arr[i] == null)
+            if (obj == null)
                 return true;
         }
         return false;
@@ -78,13 +78,16 @@ public class FastCollinearPoints
     
     private static boolean hasDuplicates(Point[] arr)
     {
+        if (arr.length < 2)
+            return false;
+        
         Arrays.sort(arr);
         
         Point a = arr[0];
         for (int i = 1; i < arr.length; i++)
         {
             Point b = arr[i];            
-            if (a == b)
+            if (a.compareTo(b) == 0)
                 return true;           
             a = b;
         }
