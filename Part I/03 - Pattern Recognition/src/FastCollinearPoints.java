@@ -1,6 +1,6 @@
 import java.util.Arrays;
 import java.util.ArrayList;
-// import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdOut;
 
 public class FastCollinearPoints
 {   
@@ -17,37 +17,41 @@ public class FastCollinearPoints
         if (hasDuplicates(points))
             throw new java.lang.IllegalArgumentException();
         
-        if (points.length < 4)
+        int n = points.length;
+        if (n < 4)
             return;
         
-        Point[] copy = Arrays.copyOf(points, points.length);
-        for (int i = 0; i < points.length; i++)
+        Point[] copy = Arrays.copyOf(points, n);
+        for (int i = 0; i < n-3; i++)
         {
             Point p = points[i];
-            Arrays.sort(copy, p.slopeOrder());
+            Arrays.sort(copy, i, n, p.slopeOrder());
+            assert copy[i] == p;     
             
-            double prev = p.slopeTo(copy[1]);
-            for (int j = 2, k = 1; j < copy.length; j++)
+            double prev = p.slopeTo(copy[i+1]);
+            for (int j = i+2, k = 1; j < n; j++)
             {
                 double next = p.slopeTo(copy[j]);
                 if (equals(prev, next))
                 {
                     k++;
+                    if (j == n-1 && k >= 3)
+                    {
+                        Point[] line = Arrays.copyOfRange(copy, j-k, j+1);
+                        line[k] = p;
+                        Arrays.sort(line);
+                        LineSegment s = new LineSegment(line[0], line[k]);                        
+                        list.add(s);
+                    }
                 }
                 else
                 {
                     if (k >= 3)
                     {
-                        int x = j-k-1;
-                        if (x > 0)
-                        {
-                            Point t = copy[x];
-                            copy[x] = copy[0];
-                            copy[0] = t;
-                        }
-                        Arrays.sort(copy, x, j);
-                        LineSegment s = new LineSegment(copy[x], copy[j-1]);
-                        // addSegment(s);
+                        Point[] line = Arrays.copyOfRange(copy, j-k, j+1);
+                        line[k] = p;
+                        Arrays.sort(line);
+                        LineSegment s = new LineSegment(line[0], line[k]);                        
                         list.add(s);
                     }
                     
@@ -55,24 +59,6 @@ public class FastCollinearPoints
                     prev = next;
                 }
             }
-        }
-    }
-    
-    private void addSegment(LineSegment segment)
-    {
-        if (list.isEmpty())
-        {
-            list.add(segment);
-        }
-        else
-        {
-            String path = segment.toString();
-            for (int i = 0; i < list.size(); i++)
-            {
-                if (list.get(i).toString().equals(path))
-                    return;
-            }
-            list.add(segment);
         }
     }
     
@@ -90,7 +76,7 @@ public class FastCollinearPoints
     {
         if (a == b) 
             return true;
-        
+
         return Math.abs(a - b) < 0.0000001d;
     }
     

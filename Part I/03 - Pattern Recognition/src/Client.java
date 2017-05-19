@@ -33,6 +33,7 @@ public class Client
         StdDraw.setPenRadius(0.005);
         StdDraw.setPenColor(StdDraw.GRAY);
         FastCollinearPoints collinear = new FastCollinearPoints(points);
+        // BruteCollinearPoints collinear = new BruteCollinearPoints(points);
         LineSegment[] segments = collinear.segments();
         for (LineSegment segment : segments)
         {
