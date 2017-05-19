@@ -1,10 +1,10 @@
 import java.util.Arrays;
-import edu.princeton.cs.algs4.Stack;
+import java.util.ArrayList;
 // import edu.princeton.cs.algs4.StdOut;
 
 public class FastCollinearPoints
 {   
-    private Stack<LineSegment> stack = new Stack<LineSegment>();
+    private ArrayList<LineSegment> list = new ArrayList<LineSegment>();
     
     public FastCollinearPoints(Point[] points)
     {
@@ -46,17 +46,9 @@ public class FastCollinearPoints
                             copy[0] = t;
                         }
                         Arrays.sort(copy, x, j);
-                        LineSegment item = new LineSegment(copy[x], copy[j-1]);
-                        if (stack.isEmpty())
-                        {
-                            stack.push(item);
-                        }
-                        else
-                        {
-                            LineSegment top = stack.peek();
-                            if (!top.toString().equals(item.toString()))
-                                stack.push(item);
-                        }
+                        LineSegment s = new LineSegment(copy[x], copy[j-1]);
+                        // addSegment(s);
+                        list.add(s);
                     }
                     
                     k = 1;
@@ -66,19 +58,32 @@ public class FastCollinearPoints
         }
     }
     
+    private void addSegment(LineSegment segment)
+    {
+        if (list.isEmpty())
+        {
+            list.add(segment);
+        }
+        else
+        {
+            String path = segment.toString();
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list.get(i).toString().equals(path))
+                    return;
+            }
+            list.add(segment);
+        }
+    }
+    
     public int numberOfSegments()
     {
-        return stack.size();
+        return list.size();
     }
     
     public LineSegment[] segments()
     {
-        LineSegment[] arr = new LineSegment[stack.size()];
-        for (int i = 0; i < arr.length; i++)
-        {
-            arr[i] = stack.pop();
-        }
-        return arr;
+        return list.toArray(new LineSegment[list.size()]);
     }
     
     private static boolean equals(final double a, final double b)

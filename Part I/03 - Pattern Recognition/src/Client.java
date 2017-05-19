@@ -33,12 +33,13 @@ public class Client
         StdDraw.setPenRadius(0.005);
         StdDraw.setPenColor(StdDraw.GRAY);
         FastCollinearPoints collinear = new FastCollinearPoints(points);
-        for (LineSegment segment : collinear.segments())
+        LineSegment[] segments = collinear.segments();
+        for (LineSegment segment : segments)
         {
             StdOut.println(segment);
             segment.draw();
         }
-        StdOut.println(collinear.segments().length);
+        StdOut.println(segments.length);
         StdDraw.show();
     }
 }
