@@ -102,7 +102,7 @@ public class FastCollinearPoints
         if (a == b) 
             return true;
 
-        return Math.abs(a - b) < 0.0000001d;
+        return Math.abs(a - b) < 0.00000001d;
     }
     
     private static boolean hasNulls(Object[] arr)
