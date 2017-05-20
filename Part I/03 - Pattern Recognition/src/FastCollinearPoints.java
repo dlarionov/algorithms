@@ -26,37 +26,36 @@ public class FastCollinearPoints
         {
             Point p = points[i];
             Arrays.sort(copy, i, n, p.slopeOrder());
-            assert copy[i] == p;     
+            
+            assert copy[i] == p;            
             
             double prev = p.slopeTo(copy[i+1]);
-            for (int j = i+2, k = 1; j < n; j++)
+            for (int j = i+2, offset = 0; j < n; j++)
             {
                 double next = p.slopeTo(copy[j]);
-                if (equals(prev, next))
+                boolean eq = equals(prev, next);
+                
+                if (eq)
                 {
-                    k++;
-                    if (j == n-1 && k >= 3)
+                    offset++;
+                }
+                
+                if (offset >= 2 && (!eq || j == n-1))
+                {
+                    // TODO !sinle points
+                    if (!duplicate(copy, p, i, prev))
                     {
-                        Point[] line = Arrays.copyOfRange(copy, j-k, j+1);
-                        line[k] = p;
-                        Arrays.sort(line);
-                        LineSegment s = new LineSegment(line[0], line[k]);                        
-                        list.add(s);
+                        Point[] line = Arrays.copyOfRange(copy, j-offset-1, j+1);
+                        line[offset+1] = p;
+                        Arrays.sort(line);                    
+                        list.add(new LineSegment(line[0], line[offset+1]));
                     }
                 }
-                else
+                
+                if (!eq)
                 {
-                    if (k >= 3)
-                    {
-                        Point[] line = Arrays.copyOfRange(copy, j-k, j+1);
-                        line[k] = p;
-                        Arrays.sort(line);
-                        LineSegment s = new LineSegment(line[0], line[k]);                        
-                        list.add(s);
-                    }
-                    
-                    k = 1;
                     prev = next;
+                    offset = 0;
                 }
             }
         }
@@ -70,6 +69,18 @@ public class FastCollinearPoints
     public LineSegment[] segments()
     {
         return list.toArray(new LineSegment[list.size()]);
+    }
+    
+    private static boolean duplicate(Point[] arr, Point p, int length, double alfa)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (equals(alfa, p.slopeTo(arr[i])))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     private static boolean equals(final double a, final double b)
