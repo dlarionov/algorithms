@@ -1,6 +1,6 @@
 import java.util.Arrays;
 import java.util.ArrayList;
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 
 public class FastCollinearPoints
 {   
@@ -22,19 +22,19 @@ public class FastCollinearPoints
             return;
         
         Point[] copy = Arrays.copyOf(points, n);
+        ArrayList<Point> band = new ArrayList<Point>();
         for (int i = 0; i < n-3; i++)
         {
             Point p = points[i];
+            boolean hasSegment = false;
             Arrays.sort(copy, i, n, p.slopeOrder());
+            assert copy[i] == p;
             
-            assert copy[i] == p;            
-            
-            double prev = p.slopeTo(copy[i+1]);
+            double prev = p.slopeTo(copy[i+1]);            
             for (int j = i+2, offset = 0; j < n; j++)
             {
                 double next = p.slopeTo(copy[j]);
-                boolean eq = equals(prev, next);
-                
+                boolean eq = equals(prev, next);                
                 if (eq)
                 {
                     offset++;
@@ -42,13 +42,36 @@ public class FastCollinearPoints
                 
                 if (offset >= 2 && (!eq || j == n-1))
                 {
-                    // TODO !sinle points
-                    if (!duplicate(copy, p, i, prev))
+                    boolean hasParentSegment = false;
+                    for (Point q : band)
                     {
-                        Point[] line = Arrays.copyOfRange(copy, j-offset-1, j+1);
-                        line[offset+1] = p;
-                        Arrays.sort(line);                    
-                        list.add(new LineSegment(line[0], line[offset+1]));
+                        if (equals(prev, p.slopeTo(q)))
+                        {
+                            hasParentSegment = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!hasParentSegment)
+                    {                       
+                        int hi = j;
+                        if (eq)
+                            hi = j+1;
+                        int lo = hi-offset-1;
+                        
+                        Arrays.sort(copy, lo, hi);
+                        Point a = copy[lo];
+                        Point b = copy[hi-1];
+                        
+                        if (p.compareTo(a) < 0)
+                            list.add(new LineSegment(p, b));
+                        else if (p.compareTo(b) > 0)
+                            list.add(new LineSegment(a, p));
+                        else
+                            list.add(new LineSegment(a, b));
+                            
+                        if (!hasSegment)
+                            hasSegment = true;
                     }
                 }
                 
@@ -58,6 +81,9 @@ public class FastCollinearPoints
                     offset = 0;
                 }
             }
+            
+            if (hasSegment)
+                band.add(p);
         }
     }
     
@@ -69,18 +95,6 @@ public class FastCollinearPoints
     public LineSegment[] segments()
     {
         return list.toArray(new LineSegment[list.size()]);
-    }
-    
-    private static boolean duplicate(Point[] arr, Point p, int length, double alfa)
-    {
-        for (int i = 0; i < length; i++)
-        {
-            if (equals(alfa, p.slopeTo(arr[i])))
-            {
-                return true;
-            }
-        }
-        return false;
     }
     
     private static boolean equals(final double a, final double b)
