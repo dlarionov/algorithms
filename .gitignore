@@ -1,4 +1,5 @@
 *.bak
-EclipseCompiler.txt
 *.java~
 *.class
+
+EclipseCompiler.txt
