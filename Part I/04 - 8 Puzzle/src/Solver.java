@@ -5,7 +5,6 @@ import edu.princeton.cs.algs4.Stack;
 
 public class Solver 
 {
-    private boolean isSolvable;
     private Transform solution;
     private MinPQ<Transform> pq;
     
@@ -14,15 +13,12 @@ public class Solver
         if (initial == null)
             throw new java.lang.NullPointerException();
         
-        Transform root = new Transform(initial, 0, null);
-        pq.insert(root);        
-        move(root);
-        
+        pq = new MinPQ<Transform>();
+        pq.insert(new Transform(initial, null));        
         while(!pq.isEmpty())
         {
             Transform t = pq.delMin();
-            Board b = t.board();
-            if (b.isGoal())
+            if (t.board().isGoal())
             {
                 solution = t;
                 break;
@@ -33,10 +29,10 @@ public class Solver
     
     private void move(Transform prev)
     {
-        int age = prev.age()+1;
-        for(Board board : prev.board.neighbors())
+        for(Board b : prev.board.neighbors())
         {
-            pq.insert(new Transform(board, age, prev));
+            if (!prev.hasBoard(b))
+                pq.insert(new Transform(b, prev));
         }
     }
     
@@ -44,13 +40,18 @@ public class Solver
     {
         private Board board;
         private int age;
+        private int priority;
         private Transform prev;
         
-        public Transform(Board board, int age, Transform prev)
+        public Transform(Board b, Transform t)
         {
-            this.board =  board;
-            this.age = age;
-            this.prev = prev;
+            if (b == null)
+                throw new java.lang.NullPointerException();
+            
+            board = b;
+            prev = t;
+            age = t == null ? 0 : t.age()+1;
+            priority = b.manhattan() + age;
         }
         
         public int compareTo(Transform that)
@@ -58,35 +59,47 @@ public class Solver
             return this.priority() - that.priority();
         }
         
+        public boolean hasBoard(Board b)
+        {
+            Transform x = prev;
+            while(x != null)
+            {
+                if (x.board().equals(b))
+                    return true;
+                x = x.prev();
+            }
+            return false;
+        }
+        
         public int priority()
         {
-            return this.board.manhattan() + this.age;
+            return priority;
         }
         
         public Board board()
         {
-            return this.board;
+            return board;
         }
         
         public int age()
         {
-            return this.age;
+            return age;
         }
         
         public Transform prev()
         {
-            return this.prev;
+            return prev;
         }
     }
     
     public boolean isSolvable()
     {
-        return isSolvable;
+        return solution != null;
     }
     
     public int moves()
     {
-        if (!isSolvable)
+        if (solution == null)
             return -1;
         
         return solution.age();
@@ -94,7 +107,7 @@ public class Solver
     
     public Iterable<Board> solution()
     {
-        if (!isSolvable)
+        if (solution == null)
             return null;
         
         Stack<Board> stack = new Stack<Board>();
