@@ -34,10 +34,11 @@ public class Board
         }
     }
     
-    private int distance(int goal, int value)
+    private int distance(int a, int b)
     {
-        int dif = Math.abs(goal - value);
-        return dif % n + dif / n;
+        int i = Math.abs(((a-1) / n) - ((b-1) / n));
+        int j = Math.abs(((a-1) % n) - ((b-1) % n));
+        return i+j;
     }
     
     public int dimension()
@@ -94,6 +95,7 @@ public class Board
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;        
+        if (this.n != that.n) return false;        
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -112,8 +114,7 @@ public class Board
             return stack;
         
         int i = z / n, j = z % n;
-        // StdOut.printf("(%d,%d) zero:%d n:%d \n", i, j, z, n);
-                
+                        
         if (i > 0) // top
         {
             arr[i][j] = arr[i-1][j];
@@ -170,11 +171,8 @@ public class Board
     
     public static void main(String[] args)
     {
-        Board board = new Board(new int[][] { {1, 2, 3}, {4, 0, 5}, {6, 7, 8} });
+        Board board = new Board(new int[][] { {5, 8, 7}, {1, 4, 6}, {3, 0, 2} });        
+        StdOut.println("manhattan:"+board.manhattan());
         StdOut.print(board);
-        for (Board b : board.neighbors())
-        {
-            StdOut.print(b);
-        }
     }
 }
