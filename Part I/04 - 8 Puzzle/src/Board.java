@@ -128,7 +128,7 @@ public class Board
             arr[i][j] = arr[i][j+1];
             arr[i][j+1] = 0;
             stack.push(new Board(arr));
-            arr[j][j+1] = arr[i][j];
+            arr[i][j+1] = arr[i][j];
             arr[i][j] = 0;
         }
         
