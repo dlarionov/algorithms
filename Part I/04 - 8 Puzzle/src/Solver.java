@@ -19,14 +19,14 @@ public class Solver
         while (!pq.isEmpty())
         {
             Transform t = pq.delMin();
-            if (t.board().isGoal())
+            if (t.board.isGoal())
             {
                 Transform x = t;
-                while (x.prev() != null)
+                while (x.prev != null)
                 {
-                    x = x.prev();
+                    x = x.prev;
                 }
-                if (x.board().equals(initial))
+                if (x.board.equals(initial))
                     solution = t;
                 break;
             }
@@ -34,12 +34,12 @@ public class Solver
         }
     }
     
-    private void move(Transform prev)
+    private void move(Transform t)
     {
-        for (Board b : prev.board.neighbors())
+        for (Board b : t.board.neighbors())
         {
-            if (!prev.hasBoard(b))
-                pq.insert(new Transform(b, prev));
+            if (!t.hasBoard(b))
+                pq.insert(new Transform(b, t));
         }
     }
     
@@ -57,13 +57,13 @@ public class Solver
             
             board = b;
             prev = t;
-            age = t == null ? 0 : t.age()+1;
+            age = t == null ? 0 : t.age+1;
             priority = b.manhattan() + age;
         }
         
         public int compareTo(Transform that)
         { 
-            return this.priority() - that.priority();
+            return this.priority - that.priority;
         }
         
         public boolean hasBoard(Board b)
@@ -71,31 +71,11 @@ public class Solver
             Transform x = prev;
             while (x != null)
             {
-                if (x.board().equals(b))
+                if (x.board.equals(b))
                     return true;
-                x = x.prev();
+                x = x.prev;
             }
             return false;
-        }
-        
-        public int priority()
-        {
-            return priority;
-        }
-        
-        public Board board()
-        {
-            return board;
-        }
-        
-        public int age()
-        {
-            return age;
-        }
-        
-        public Transform prev()
-        {
-            return prev;
         }
     }
     
@@ -109,7 +89,7 @@ public class Solver
         if (solution == null)
             return -1;
         
-        return solution.age();
+        return solution.age;
     }
     
     public Iterable<Board> solution()
@@ -121,8 +101,8 @@ public class Solver
         Transform x = solution;
         while (x != null)
         {
-            stack.push(x.board());
-            x = x.prev();
+            stack.push(x.board);
+            x = x.prev;
         }
         return stack;
     }

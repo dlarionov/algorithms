@@ -29,18 +29,17 @@ public class Board
                 else if (x != k+1)
                 {
                     hamming++;
-                    manhattan += distance(k+1, x);
+                    manhattan += distance(k, x);
                 }
                 arr[i][j] = x;
             }
         }
     }
     
-    private int distance(int a, int b)
+    private int distance(int i, int x)
     {
-        int i = Math.abs(((a-1) / n) - ((b-1) / n));
-        int j = Math.abs(((a-1) % n) - ((b-1) % n));
-        return i+j;
+        int j = x-1;
+        return Math.abs((i / n) - (j / n)) + Math.abs((i % n) - (j % n));
     }
     
     public int dimension()
@@ -102,7 +101,7 @@ public class Board
         {
             for (int j = 0; j < n; j++)
             {
-                if (this.arr[i][j] != that.arr[i][j]) // WTF !?
+                if (this.arr[i][j] != that.arr[i][j])
                     return false;
             }
         }
