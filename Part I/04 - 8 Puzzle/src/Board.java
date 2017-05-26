@@ -22,8 +22,10 @@ public class Board
             {
                 int k = i*n+j;
                 int x = blocks[i][j];
-                if (x == 0) 
+                if (x == 0)
+                {
                     z = k;
+                }
                 else if (x != k+1)
                 {
                     hamming++;
@@ -74,7 +76,7 @@ public class Board
             arr[1][1] = x;
             board = new Board(arr);
             arr[1][1] = arr[1][0];
-            arr[1][0] = x;            
+            arr[1][0] = x;
         }
         else
         {
@@ -83,26 +85,26 @@ public class Board
             arr[0][1] = x;
             board = new Board(arr);
             arr[0][1] = arr[0][0];
-            arr[0][0] = x;            
+            arr[0][0] = x;
         }
         
-        return board;        
-    }    
+        return board;
+    }
     
     public boolean equals(Object y)
     {
         if (y == this) return true;
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
-        Board that = (Board) y;        
-        if (this.n != that.n) return false;        
+        Board that = (Board) y;
+        if (this.n != that.n) return false;
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
             {
                 if (this.arr[i][j] != that.arr[i][j]) // WTF !?
                     return false;
-            }            
+            }
         }
         return true;
     }
@@ -154,7 +156,7 @@ public class Board
         return stack;
     }
     
-    public String toString() 
+    public String toString()
     {
         StringBuilder s = new StringBuilder();
         s.append(n + "\n");
@@ -171,7 +173,7 @@ public class Board
     
     public static void main(String[] args)
     {
-        Board board = new Board(new int[][] { {5, 8, 7}, {1, 4, 6}, {3, 0, 2} });        
+        Board board = new Board(new int[][] { {5, 8, 7}, {1, 4, 6}, {3, 0, 2} });
         StdOut.println("manhattan:"+board.manhattan());
         StdOut.print(board);
     }

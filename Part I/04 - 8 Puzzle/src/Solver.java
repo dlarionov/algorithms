@@ -27,7 +27,7 @@ public class Solver
                     x = x.prev();
                 }
                 if (x.board().equals(initial))
-                    solution = t;                
+                    solution = t;
                 break;
             }
             move(t);
