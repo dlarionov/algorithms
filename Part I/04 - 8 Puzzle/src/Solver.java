@@ -5,36 +5,36 @@ import edu.princeton.cs.algs4.Stack;
 
 public class Solver 
 {
-    private Transform solution;
-    private MinPQ<Transform> pq;
+    private Transform solution;    
     
     public Solver(Board initial)
     {
         if (initial == null)
             throw new java.lang.NullPointerException();
         
-        pq = new MinPQ<Transform>();
-        pq.insert(new Transform(initial, null));
-        pq.insert(new Transform(initial.twin(), null));
-        while (!pq.isEmpty())
+        MinPQ<Transform> pq1 = new MinPQ<Transform>();
+        MinPQ<Transform> pq2 = new MinPQ<Transform>();
+        pq1.insert(new Transform(initial, null));
+        pq2.insert(new Transform(initial.twin(), null));
+        while (true)
         {
-            Transform t = pq.delMin();
-            if (t.board.isGoal())
+            Transform t1 = pq1.delMin();
+            if (t1.board.isGoal())
             {
-                Transform x = t;
-                while (x.prev != null)
-                {
-                    x = x.prev;
-                }
-                if (x.board.equals(initial))
-                    solution = t;
+                solution = t1;
                 break;
             }
-            move(t);
+            
+            Transform t2 = pq2.delMin();
+            if (t2.board.isGoal())
+                break;
+            
+            move(pq1, t1);
+            move(pq2, t2);
         }
     }
     
-    private void move(Transform t)
+    private void move(MinPQ<Transform> pq, Transform t)
     {
         for (Board b : t.board.neighbors())
         {
