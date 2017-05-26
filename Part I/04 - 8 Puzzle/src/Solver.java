@@ -14,13 +14,20 @@ public class Solver
             throw new java.lang.NullPointerException();
         
         pq = new MinPQ<Transform>();
-        pq.insert(new Transform(initial, null));        
-        while(!pq.isEmpty())
+        pq.insert(new Transform(initial, null));
+        pq.insert(new Transform(initial.twin(), null));
+        while (!pq.isEmpty())
         {
             Transform t = pq.delMin();
             if (t.board().isGoal())
             {
-                solution = t;
+                Transform x = t;
+                while (x.prev() != null)
+                {
+                    x = x.prev();
+                }
+                if (x.board().equals(initial))
+                    solution = t;                
                 break;
             }
             move(t);
@@ -29,7 +36,7 @@ public class Solver
     
     private void move(Transform prev)
     {
-        for(Board b : prev.board.neighbors())
+        for (Board b : prev.board.neighbors())
         {
             if (!prev.hasBoard(b))
                 pq.insert(new Transform(b, prev));
@@ -62,7 +69,7 @@ public class Solver
         public boolean hasBoard(Board b)
         {
             Transform x = prev;
-            while(x != null)
+            while (x != null)
             {
                 if (x.board().equals(b))
                     return true;
@@ -112,7 +119,7 @@ public class Solver
         
         Stack<Board> stack = new Stack<Board>();
         Transform x = solution;
-        while(x != null)
+        while (x != null)
         {
             stack.push(x.board());
             x = x.prev();

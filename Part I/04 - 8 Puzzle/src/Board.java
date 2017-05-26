@@ -1,6 +1,5 @@
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stack;
-import java.util.Arrays;
 
 public class Board 
 {
@@ -28,7 +27,7 @@ public class Board
                 else if (x != k+1)
                 {
                     hamming++;
-                    manhattan+= distance(k+1, x);
+                    manhattan += distance(k+1, x);
                 }
                 arr[i][j] = x;
             }
@@ -84,7 +83,8 @@ public class Board
             board = new Board(arr);
             arr[0][1] = arr[0][0];
             arr[0][0] = x;            
-        }        
+        }
+        
         return board;        
     }    
     
@@ -93,8 +93,16 @@ public class Board
         if (y == this) return true;
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
-        Board that = (Board) y;
-        return this.n == that.n && Arrays.equals(this.arr, that.arr); // WTF !?
+        Board that = (Board) y;        
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (this.arr[i][j] != that.arr[i][j]) // WTF !?
+                    return false;
+            }            
+        }
+        return true;
     }
     
     public Iterable<Board> neighbors()
@@ -103,7 +111,8 @@ public class Board
         if (n < 2)
             return stack;
         
-        int i = z/n, j = z%n;
+        int i = z / n, j = z % n;
+        // StdOut.printf("(%d,%d) zero:%d n:%d \n", i, j, z, n);
                 
         if (i > 0) // top
         {
@@ -161,9 +170,11 @@ public class Board
     
     public static void main(String[] args)
     {
-        Board board = new Board(new int[][] { {8, 1, 3}, {4, 0, 2}, {7, 6, 5} });
+        Board board = new Board(new int[][] { {1, 2, 3}, {4, 0, 5}, {6, 7, 8} });
         StdOut.print(board);
-        StdOut.println(board.hamming());
-        StdOut.println(board.manhattan());
+        for (Board b : board.neighbors())
+        {
+            StdOut.print(b);
+        }
     }
 }
