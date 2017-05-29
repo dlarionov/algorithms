@@ -2,7 +2,8 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdDraw;
-// import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class KdTree {
     private Node root;
@@ -15,39 +16,37 @@ public class KdTree {
     private class Node {
         private Node left;
         private Node right;
-        private Point2D point;
         private boolean odd;
-               
+        private Point2D point;
+        
         public Node(Point2D p) {
-            point = p;            
+            point = p;
         }
         
         public int compareToPoint(Point2D p) {
+            int r;
             if (this.point.equals(p))
-                return 0;
+                r = 0;
             else if (this.odd)
-                return Double.compare(this.point.y(), p.y());
+                r = Double.compare(this.point.y(), p.y()) < 0 ? -1 : 1;
             else
-                return Double.compare(this.point.x(), p.x());
+                r = Double.compare(this.point.x(), p.x()) < 0 ? -1 : 1;
+            return r;
         }
         
         public int compareToRect(RectHV rect) {
+            int r;
             if (this.odd) {
-                if (Double.compare(this.point.y(), rect.ymax()) > 0)
-                    return 1;
-                else if (Double.compare(this.point.y(), rect.ymin()) < 0)
-                    return -1;
-                else
-                    return 0;
+                if (Double.compare(this.point.y(), rect.ymin()) < 0) r = -1;
+                else if (Double.compare(this.point.y(), rect.ymax()) > 0) r = 1;
+                else r = 0;
             }
             else {
-                if (Double.compare(this.point.x(), rect.xmax()) > 0)
-                    return 1;
-                else if (Double.compare(this.point.x(), rect.xmin()) < 0)
-                    return -1;
-                else
-                    return 0;
+                if (Double.compare(this.point.x(), rect.xmin()) < 0) r = -1;
+                else if (Double.compare(this.point.x(), rect.xmax()) > 0) r = 1;
+                else r = 0;
             }
+            return r;
         }
     }
     
@@ -127,17 +126,14 @@ public class KdTree {
         if (rect == null)
             throw new java.lang.NullPointerException();
         
-        Stack<Point2D> arr = new Stack<Point2D>();        
-        range(rect, root, arr);        
-        return arr;
+        Stack<Point2D> stack = new Stack<Point2D>();        
+        range(rect, root, stack);        
+        return stack;
     }
     
     private static void range(RectHV rect, Node node, Stack<Point2D> res) {
         if (node == null)
             return;
-        
-        if (rect.contains(node.point))
-            res.push(node.point);
         
         int cmp = node.compareToRect(rect);
         if (cmp < 0)
@@ -147,6 +143,9 @@ public class KdTree {
         else {
             range(rect, node.left, res);
             range(rect, node.right, res);
+            
+            if (rect.contains(node.point))
+                res.push(node.point);
         }
     }
     
@@ -160,27 +159,23 @@ public class KdTree {
     }        
     
     public static void main(String[] args) {
-        StdDraw.setPenRadius(.001);
-        StdDraw.setPenColor(StdDraw.GRAY);
-        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
-        r.draw();
-        
-        StdDraw.setPenRadius(.02);
-        StdDraw.setPenColor(StdDraw.BLACK);
-        KdTree t = new KdTree();
-        t.insert(new Point2D(0.9, 0.8));
-        t.insert(new Point2D(0.8, 0.2));
-        t.insert(new Point2D(0.206107, 0.904508));
-        t.insert(new Point2D(0.1, 0.1));
-        t.insert(new Point2D(0.3, 0.7));
-        t.insert(new Point2D(0.2, 0.2));    
-        t.draw();
-        
-        StdDraw.setPenRadius(.01);
-        StdDraw.setPenColor(StdDraw.RED);        
-        for(Point2D p : t.range(r)) {
-            p.draw();
-        }
-        StdDraw.show();        
+//        StdDraw.setPenRadius(.001);
+//        StdDraw.setPenColor(StdDraw.GRAY);
+//        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
+//        r.draw();
+//        
+//        StdDraw.setPenRadius(.02);
+//        StdDraw.setPenColor(StdDraw.BLACK);
+//        KdTree t = new KdTree();
+//        for (int i = 0; i < 1000; i++)
+//            t.insert(new Point2D(StdRandom.uniform(0.0, 1.0), StdRandom.uniform(0.0, 1.0)));
+//        t.draw();
+//        
+//        StdDraw.setPenRadius(.01);
+//        StdDraw.setPenColor(StdDraw.RED);        
+//        for(Point2D p : t.range(r)) {
+//            p.draw();
+//        }
+//        StdDraw.show();        
     }
 }
