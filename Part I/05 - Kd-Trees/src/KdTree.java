@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
     private Node root;
+    private int size;
     
     public KdTree() {
         
@@ -16,12 +17,9 @@ public class KdTree {
         private Node right;
         private Point2D point;
         private boolean odd;
-        private int cnt;
         
-        public Node(Point2D p)
-        {
+        public Node(Point2D p) {
             point = p;
-            cnt = 1;
         }
         
         public int compareTo(Point2D p) {
@@ -31,17 +29,13 @@ public class KdTree {
         }
         
         public void addLeft(Point2D p) {
-            Node n = new Node(p);
-            left = n;
-            cnt =+ n.cnt; // TODO
-            n.odd = !odd;
+            left = new Node(p);
+            left.odd = !odd;
         }
         
         public void addRight(Point2D p) {
-            Node n = new Node(p);
-            right = n;
-            cnt =+ n.cnt; // TODO
-            n.odd = !odd;
+            right = new Node(p);
+            right.odd = !odd;
         }
     }
     
@@ -50,7 +44,7 @@ public class KdTree {
     }
     
     public int size() { 
-        return root == null ? 0 : root.cnt;
+        return size;
     }
     
     public void insert(Point2D p) {
@@ -59,6 +53,7 @@ public class KdTree {
         
         if (root == null) {
             root = new Node(p);
+            size++;
             return;
         }
         
@@ -69,6 +64,7 @@ public class KdTree {
             if (cmp < 0) {
                 if (x.left == null) {
                     x.addLeft(p);
+                    size++;
                     return;
                 }
                 x = x.left;
@@ -76,6 +72,7 @@ public class KdTree {
             else if (cmp > 0) {
                 if (x.right == null) {
                     x.addRight(p);
+                    size++;
                     return;
                 }
                 x = x.right;
@@ -84,6 +81,20 @@ public class KdTree {
                 return;
         }
     }
+    
+//    private Node put(Node x, Point2D p)
+//    {
+//        if (x == null) 
+//            return new Node(p);
+//        int cmp = x.compareTo(p);
+//        if (cmp < 0)
+//            x.left = put(x.left, p);
+//        else if (cmp > 0)
+//            x.right = put(x.right, p);
+//        else if (cmp == 0)
+//            x.point = p;
+//        return x;
+//    }
     
     public boolean contains(Point2D p) {
         if (root == null)
