@@ -1,8 +1,8 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdDraw;
+// import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
     private Node root;
@@ -17,25 +17,37 @@ public class KdTree {
         private Node right;
         private Point2D point;
         private boolean odd;
-        
+               
         public Node(Point2D p) {
-            point = p;
+            point = p;            
         }
         
-        public int compareTo(Point2D p) {
-            if (this.point.equals(p)) return 0;
-            else if (this.odd) return Double.compare(this.point.x(), p.x());            
-            else return Double.compare(this.point.y(), p.y());
+        public int compareToPoint(Point2D p) {
+            if (this.point.equals(p))
+                return 0;
+            else if (this.odd)
+                return Double.compare(this.point.y(), p.y());
+            else
+                return Double.compare(this.point.x(), p.x());
         }
         
-        public void addLeft(Point2D p) {
-            left = new Node(p);
-            left.odd = !odd;
-        }
-        
-        public void addRight(Point2D p) {
-            right = new Node(p);
-            right.odd = !odd;
+        public int compareToRect(RectHV rect) {
+            if (this.odd) {
+                if (Double.compare(this.point.y(), rect.ymax()) > 0)
+                    return 1;
+                else if (Double.compare(this.point.y(), rect.ymin()) < 0)
+                    return -1;
+                else
+                    return 0;
+            }
+            else {
+                if (Double.compare(this.point.x(), rect.xmax()) > 0)
+                    return 1;
+                else if (Double.compare(this.point.x(), rect.xmin()) < 0)
+                    return -1;
+                else
+                    return 0;
+            }
         }
     }
     
@@ -60,10 +72,11 @@ public class KdTree {
         Node x = root;
         while(x != null)
         {
-            int cmp = x.compareTo(p);
+            int cmp = x.compareToPoint(p);
             if (cmp < 0) {
                 if (x.left == null) {
-                    x.addLeft(p);
+                    x.left = new Node(p);
+                    x.left.odd = !x.odd;
                     size++;
                     return;
                 }
@@ -71,7 +84,8 @@ public class KdTree {
             }
             else if (cmp > 0) {
                 if (x.right == null) {
-                    x.addRight(p);
+                    x.right = new Node(p);
+                    x.right.odd = !x.odd;
                     size++;
                     return;
                 }
@@ -82,20 +96,6 @@ public class KdTree {
         }
     }
     
-//    private Node put(Node x, Point2D p)
-//    {
-//        if (x == null) 
-//            return new Node(p);
-//        int cmp = x.compareTo(p);
-//        if (cmp < 0)
-//            x.left = put(x.left, p);
-//        else if (cmp > 0)
-//            x.right = put(x.right, p);
-//        else if (cmp == 0)
-//            x.point = p;
-//        return x;
-//    }
-    
     public boolean contains(Point2D p) {
         if (root == null)
             return false;
@@ -103,7 +103,7 @@ public class KdTree {
         Node x = root;
         while(x != null)
         {
-            int cmp = x.compareTo(p);
+            int cmp = x.compareToPoint(p);
             if (cmp < 0) x = x.left;
             else if (cmp > 0) x = x.right;
             else return true;
@@ -112,45 +112,75 @@ public class KdTree {
     }
     
     public void draw() {
-//        for (Point2D p : set)
-//            p.draw();
+        draw(root);
+    }
+    
+    private static void draw(Node node) {
+        if (node == null)
+            return;
+        node.point.draw();
+        draw(node.left);
+        draw(node.right);
     }
     
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null)
             throw new java.lang.NullPointerException();
         
-//        Stack<Point2D> arr = new Stack<Point2D>();
-//        for (Point2D p : set)
-//        {
-//            if (rect.contains(p))
-//                arr.push(p);            
-//        }
-//        return arr;
-        return null;
+        Stack<Point2D> arr = new Stack<Point2D>();        
+        range(rect, root, arr);        
+        return arr;
+    }
+    
+    private static void range(RectHV rect, Node node, Stack<Point2D> res) {
+        if (node == null)
+            return;
+        
+        if (rect.contains(node.point))
+            res.push(node.point);
+        
+        int cmp = node.compareToRect(rect);
+        if (cmp < 0)
+            range(rect, node.left, res);
+        else if (cmp > 0)
+            range(rect, node.right, res);
+        else {
+            range(rect, node.left, res);
+            range(rect, node.right, res);
+        }
     }
     
     public Point2D nearest(Point2D p) {
         if (p == null)
             throw new java.lang.NullPointerException();
         
-//        if (set.isEmpty())
-//            return null;
+        // TODO
         
-//        Point2D champion = null;
-//        double distance = 2;
-//        for (Point2D q : set) {
-//            double d = p.distanceTo(q);
-//            if (Double.compare(distance, d) > 0) {
-//                champion = q;
-//                distance = d;
-//            }
-//        }
-//        return champion;
         return null;
     }        
     
     public static void main(String[] args) {
+        StdDraw.setPenRadius(.001);
+        StdDraw.setPenColor(StdDraw.GRAY);
+        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
+        r.draw();
         
+        StdDraw.setPenRadius(.02);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        KdTree t = new KdTree();
+        t.insert(new Point2D(0.9, 0.8));
+        t.insert(new Point2D(0.8, 0.2));
+        t.insert(new Point2D(0.206107, 0.904508));
+        t.insert(new Point2D(0.1, 0.1));
+        t.insert(new Point2D(0.3, 0.7));
+        t.insert(new Point2D(0.2, 0.2));    
+        t.draw();
+        
+        StdDraw.setPenRadius(.01);
+        StdDraw.setPenColor(StdDraw.RED);        
+        for(Point2D p : t.range(r)) {
+            p.draw();
+        }
+        StdDraw.show();        
     }
 }
