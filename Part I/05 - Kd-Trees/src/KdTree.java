@@ -114,7 +114,7 @@ public class KdTree {
         draw(root);
     }
     
-    private static void draw(Node node) {
+    private void draw(Node node) {
         if (node == null)
             return;
         node.point.draw();
@@ -131,7 +131,7 @@ public class KdTree {
         return stack;
     }
     
-    private static void range(RectHV rect, Node node, Stack<Point2D> res) {
+    private void range(RectHV rect, Node node, Stack<Point2D> res) {
         if (node == null)
             return;
         
@@ -144,8 +144,19 @@ public class KdTree {
             range(rect, node.left, res);
             range(rect, node.right, res);
             
-            if (rect.contains(node.point))
-                res.push(node.point);
+            if (node.odd) {
+                double x = node.point.x();
+                if (x > rect.xmin() && x < rect.xmax())
+                    res.push(node.point);
+            }
+            else {
+                double y = node.point.y();
+                if (y > rect.ymin() && y < rect.ymax())
+                    res.push(node.point);
+            }
+            
+//            if (rect.contains(node.point))
+//                res.push(node.point);
         }
     }
     
@@ -159,23 +170,23 @@ public class KdTree {
     }        
     
     public static void main(String[] args) {
-//        StdDraw.setPenRadius(.001);
-//        StdDraw.setPenColor(StdDraw.GRAY);
-//        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
-//        r.draw();
-//        
-//        StdDraw.setPenRadius(.02);
-//        StdDraw.setPenColor(StdDraw.BLACK);
-//        KdTree t = new KdTree();
-//        for (int i = 0; i < 1000; i++)
-//            t.insert(new Point2D(StdRandom.uniform(0.0, 1.0), StdRandom.uniform(0.0, 1.0)));
-//        t.draw();
-//        
-//        StdDraw.setPenRadius(.01);
-//        StdDraw.setPenColor(StdDraw.RED);        
-//        for(Point2D p : t.range(r)) {
-//            p.draw();
-//        }
-//        StdDraw.show();        
+        StdDraw.setPenRadius(.001);
+        StdDraw.setPenColor(StdDraw.GRAY);
+        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
+        r.draw();
+        
+        StdDraw.setPenRadius(.02);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        KdTree t = new KdTree();
+        for (int i = 0; i < 10000; i++)
+            t.insert(new Point2D(StdRandom.uniform(0.0, 1.0), StdRandom.uniform(0.0, 1.0)));
+        t.draw();
+        
+        StdDraw.setPenRadius(.01);
+        StdDraw.setPenColor(StdDraw.RED);        
+        for(Point2D p : t.range(r)) {
+            p.draw();
+        }
+        StdDraw.show();        
     }
 }
