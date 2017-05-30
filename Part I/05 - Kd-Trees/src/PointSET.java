@@ -56,7 +56,7 @@ public class PointSET {
             return null;
         
         Point2D champion = null;
-        double distance = 2;
+        double distance = Double.POSITIVE_INFINITY;
         for (Point2D q : set) {
             double d = p.distanceTo(q);
             if (Double.compare(distance, d) > 0) {

@@ -154,9 +154,6 @@ public class KdTree {
                 if (y > rect.ymin() && y < rect.ymax())
                     res.push(node.point);
             }
-            
-//            if (rect.contains(node.point))
-//                res.push(node.point);
         }
     }
     
@@ -175,14 +172,14 @@ public class KdTree {
         RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
         r.draw();
         
-        StdDraw.setPenRadius(.02);
+        StdDraw.setPenRadius(.01);
         StdDraw.setPenColor(StdDraw.BLACK);
         KdTree t = new KdTree();
         for (int i = 0; i < 10000; i++)
             t.insert(new Point2D(StdRandom.uniform(0.0, 1.0), StdRandom.uniform(0.0, 1.0)));
         t.draw();
         
-        StdDraw.setPenRadius(.01);
+        StdDraw.setPenRadius(.005);
         StdDraw.setPenColor(StdDraw.RED);        
         for(Point2D p : t.range(r)) {
             p.draw();
