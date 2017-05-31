@@ -161,27 +161,46 @@ public class KdTree {
         if (p == null)
             throw new java.lang.NullPointerException();
         
-        // nearest(p, root);
-        
-        return null;
-    }
+        return nearest(p, root, Double.POSITIVE_INFINITY, null);
+    }  
     
-    private Point2D nearest(Point2D point, Node node, RectHV rect, double distance, Point2D champion)
+    private Point2D nearest(Point2D point, Node node, double distance, Point2D champion)
     {
         if (node == null)
             return champion;
         
-        int cmp = node.compareToRect(rect);
-        if (cmp < 0)
-            nearest(point, node.left, rect, distance, champion);
-        else if (cmp > 0)
-            nearest(point, node.left, rect, distance, champion);
-        else {
-            nearest(point, node.left, rect, distance, champion);
-            nearest(point, node.left, rect, distance, champion);
+        RectHV square = square(point, distance);
+        if (square.contains(node.point)) {
+            double value = node.point.distanceSquaredTo(point);
+            if (value < distance * distance) {
+                distance = Math.sqrt(value);
+                square = square(point, distance);
+                champion = node.point;
+            }
         }
         
-        rerurn champion;
+        int cmp = node.compareToRect(square);
+        if (cmp < 0)
+            champion = nearest(point, node.left, distance, champion);
+        else if (cmp > 0)
+            champion = nearest(point, node.right, distance, champion);
+        else {
+            boolean flag = node.compareToPoint(point) < 0;            
+            if (flag)            
+                champion = nearest(point, node.right, distance, champion);
+            else
+                champion = nearest(point, node.left, distance, champion);
+            
+            // square = square(champion, distan
+            
+            champion = nearest(point, node.right, distance, champion);
+        }
+        
+        return champion;
+    }
+    
+    private RectHV square(Point2D point, double distance) {
+        return new RectHV(point.x()-distance, point.y()-distance, point.x()+distance, point.y()+distance);
     }
     
     public static void main(String[] args) {
@@ -198,10 +217,10 @@ public class KdTree {
         t.draw();
         
         StdDraw.setPenRadius(.005);
-        StdDraw.setPenColor(StdDraw.RED);        
+        StdDraw.setPenColor(StdDraw.RED);
         for(Point2D p : t.range(r)) {
             p.draw();
         }
-        StdDraw.show();        
+        StdDraw.show();
     }
 }
