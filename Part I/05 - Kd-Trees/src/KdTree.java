@@ -161,10 +161,28 @@ public class KdTree {
         if (p == null)
             throw new java.lang.NullPointerException();
         
-        // TODO
+        // nearest(p, root);
         
         return null;
-    }        
+    }
+    
+    private Point2D nearest(Point2D point, Node node, RectHV rect, double distance, Point2D champion)
+    {
+        if (node == null)
+            return champion;
+        
+        int cmp = node.compareToRect(rect);
+        if (cmp < 0)
+            nearest(point, node.left, rect, distance, champion);
+        else if (cmp > 0)
+            nearest(point, node.left, rect, distance, champion);
+        else {
+            nearest(point, node.left, rect, distance, champion);
+            nearest(point, node.left, rect, distance, champion);
+        }
+        
+        rerurn champion;
+    }
     
     public static void main(String[] args) {
         StdDraw.setPenRadius(.001);
