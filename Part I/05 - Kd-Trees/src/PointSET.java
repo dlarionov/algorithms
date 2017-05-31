@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.Stack;
 
 public class PointSET {
-    SET<Point2D> set;
+    private SET<Point2D> set;
     
     public PointSET() {
         set = new SET<Point2D>();

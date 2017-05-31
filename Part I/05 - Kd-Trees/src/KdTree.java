@@ -1,16 +1,12 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 
 public class KdTree {
     private Node root;
     private int size;
     
     public KdTree() {
-        
     }
     
     private class Node {
@@ -19,11 +15,11 @@ public class KdTree {
         private boolean odd;
         private Point2D point;
         
-        public Node(Point2D p) {
+        private Node(Point2D p) {
             point = p;
         }
         
-        public int compareToPoint(Point2D p) {
+        private int compareToPoint(Point2D p) {
             int r;
             if (this.point.equals(p))
                 r = 0;
@@ -34,7 +30,7 @@ public class KdTree {
             return r;
         }
         
-        public int compareToRect(RectHV rect) {
+        private int compareToRect(RectHV rect) {
             int r;
             if (this.odd) {
                 if (Double.compare(this.point.y(), rect.ymin()) < 0) r = -1;
@@ -69,7 +65,7 @@ public class KdTree {
         }
         
         Node x = root;
-        while(x != null)
+        while (true)
         {
             int cmp = x.compareToPoint(p);
             if (cmp < 0) {
@@ -100,7 +96,7 @@ public class KdTree {
             return false;
         
         Node x = root;
-        while(x != null)
+        while (x != null)
         {
             int cmp = x.compareToPoint(p);
             if (cmp < 0) x = x.left;
@@ -131,96 +127,96 @@ public class KdTree {
         return stack;
     }
     
-    private void range(RectHV rect, Node node, Stack<Point2D> res) {
+    private void range(RectHV rect, Node node, Stack<Point2D> stack) {
         if (node == null)
             return;
         
         int cmp = node.compareToRect(rect);
         if (cmp < 0)
-            range(rect, node.left, res);
+            range(rect, node.left, stack);
         else if (cmp > 0)
-            range(rect, node.right, res);
+            range(rect, node.right, stack);
         else {
-            range(rect, node.left, res);
-            range(rect, node.right, res);
+            range(rect, node.left, stack);
+            range(rect, node.right, stack);
             
             if (node.odd) {
                 double x = node.point.x();
                 if (x > rect.xmin() && x < rect.xmax())
-                    res.push(node.point);
+                    stack.push(node.point);
             }
             else {
                 double y = node.point.y();
                 if (y > rect.ymin() && y < rect.ymax())
-                    res.push(node.point);
+                    stack.push(node.point);
             }
         }
     }
     
     public Point2D nearest(Point2D p) {
         if (p == null)
-            throw new java.lang.NullPointerException();
-        
-        return nearest(p, root, Double.POSITIVE_INFINITY, null);
-    }  
+            throw new java.lang.NullPointerException();        
+        return new NearestSearch(p, root).champion();
+    }
     
-    private Point2D nearest(Point2D point, Node node, double distance, Point2D champion)
-    {
-        if (node == null)
-            return champion;
+    private class NearestSearch {
+        private Point2D point;
+        private Point2D champion;
+        private double distance;        
         
-        RectHV square = square(point, distance);
-        if (square.contains(node.point)) {
-            double value = node.point.distanceSquaredTo(point);
-            if (value < distance * distance) {
-                distance = Math.sqrt(value);
-                square = square(point, distance);
-                champion = node.point;
+        private NearestSearch(Point2D p, Node node) {
+            point = p;
+            distance = Double.POSITIVE_INFINITY;
+            search(node);
+        }
+        
+        private void search(Node node) {
+            if (node == null)
+                return;
+            
+            RectHV square = zoom();
+            if (square.contains(node.point)) {
+                double value = node.point.distanceSquaredTo(point);
+                if (value < distance*distance) {
+                    distance = Math.sqrt(value);
+                    champion = node.point;
+                    square = zoom();
+                }
+            }
+            
+            int cmp = node.compareToRect(square);
+            if (cmp < 0)
+                search(node.left);
+            else if (cmp > 0)
+                search(node.right);
+            else {
+                boolean goLeft = node.compareToPoint(point) < 0;
+                if (goLeft)
+                    search(node.left);
+                else
+                    search(node.right);
+                
+                square = zoom();
+                cmp = node.compareToRect(square);
+                if (cmp == 0) {
+                    if (!goLeft)
+                        search(node.left);
+                    else
+                        search(node.right);
+                }                
             }
         }
         
-        int cmp = node.compareToRect(square);
-        if (cmp < 0)
-            champion = nearest(point, node.left, distance, champion);
-        else if (cmp > 0)
-            champion = nearest(point, node.right, distance, champion);
-        else {
-            boolean flag = node.compareToPoint(point) < 0;            
-            if (flag)            
-                champion = nearest(point, node.right, distance, champion);
-            else
-                champion = nearest(point, node.left, distance, champion);
-            
-            // square = square(champion, distan
-            
-            champion = nearest(point, node.right, distance, champion);
+        private RectHV zoom() {
+            return new RectHV(point.x()-distance, point.y()-distance, point.x()+distance, point.y()+distance);
         }
         
-        return champion;
-    }
-    
-    private RectHV square(Point2D point, double distance) {
-        return new RectHV(point.x()-distance, point.y()-distance, point.x()+distance, point.y()+distance);
+        private Point2D champion() {
+            return champion;
+        }
     }
     
     public static void main(String[] args) {
-        StdDraw.setPenRadius(.001);
-        StdDraw.setPenColor(StdDraw.GRAY);
-        RectHV r = new RectHV(0.2, 0.2, 0.8, 0.8);
-        r.draw();
         
-        StdDraw.setPenRadius(.01);
-        StdDraw.setPenColor(StdDraw.BLACK);
-        KdTree t = new KdTree();
-        for (int i = 0; i < 10000; i++)
-            t.insert(new Point2D(StdRandom.uniform(0.0, 1.0), StdRandom.uniform(0.0, 1.0)));
-        t.draw();
-        
-        StdDraw.setPenRadius(.005);
-        StdDraw.setPenColor(StdDraw.RED);
-        for(Point2D p : t.range(r)) {
-            p.draw();
-        }
-        StdDraw.show();
     }
 }
