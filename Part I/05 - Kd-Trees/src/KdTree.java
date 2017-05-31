@@ -10,16 +10,16 @@ public class KdTree {
     }
     
     private class Node {
-        private Node left;
-        private Node right;
-        private boolean odd;
+        public Node left;
+        public Node right;
+        public boolean odd;
         private Point2D point;
         
-        private Node(Point2D p) {
+        public Node(Point2D p) {
             point = p;
         }
         
-        private int compareToPoint(Point2D p) {
+        public int compareToPoint(Point2D p) {
             int r;
             if (this.point.equals(p))
                 r = 0;
@@ -30,7 +30,7 @@ public class KdTree {
             return r;
         }
         
-        private int compareToRect(RectHV rect) {
+        public int compareToRect(RectHV rect) {
             int r;
             if (this.odd) {
                 if (Double.compare(this.point.y(), rect.ymin()) < 0) r = -1;
@@ -142,12 +142,12 @@ public class KdTree {
             
             if (node.odd) {
                 double x = node.point.x();
-                if (x > rect.xmin() && x < rect.xmax())
+                if (x >= rect.xmin() && x <= rect.xmax())
                     stack.push(node.point);
             }
             else {
                 double y = node.point.y();
-                if (y > rect.ymin() && y < rect.ymax())
+                if (y >= rect.ymin() && y <= rect.ymax())
                     stack.push(node.point);
             }
         }
@@ -164,7 +164,7 @@ public class KdTree {
         private Point2D champion;
         private double distance;        
         
-        private NearestSearch(Point2D p, Node node) {
+        public NearestSearch(Point2D p, Node node) {
             point = p;
             distance = Double.POSITIVE_INFINITY;
             search(node);
@@ -211,12 +211,12 @@ public class KdTree {
             return new RectHV(point.x()-distance, point.y()-distance, point.x()+distance, point.y()+distance);
         }
         
-        private Point2D champion() {
+        public Point2D champion() {
             return champion;
         }
     }
     
     public static void main(String[] args) {
-        
+
     }
 }

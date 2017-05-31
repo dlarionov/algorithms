@@ -40,8 +40,7 @@ public class PointSET {
             throw new java.lang.NullPointerException();
         
         Stack<Point2D> arr = new Stack<Point2D>();
-        for (Point2D p : set)
-        {
+        for (Point2D p : set) {
             if (rect.contains(p))
                 arr.push(p);            
         }
