@@ -10,3 +10,10 @@ EclipseCompiler.txt
 /Part I/03 - Pattern Recognition/test/input8000.txt
 /Part I/05 - Kd-Trees/test/input*
 /Part I/05 - Kd-Trees/test/circle10000.txt
+
+[Oo]bj/
+[Bb]in/
+*.user
+*.suo
+*.log
+*.csproj
