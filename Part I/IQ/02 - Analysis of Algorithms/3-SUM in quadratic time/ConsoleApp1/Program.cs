@@ -30,13 +30,8 @@ namespace ConsoleApp1
                         lo++;
                     else
                     {
-                        if (i < lo)
-                            Console.WriteLine($"({arr[i]}, {arr[lo]}, {arr[hi]})");
-                        else if (i > hi)
-                            Console.WriteLine($"({arr[lo]}, {arr[hi]}, {arr[i]})");
-                        else
-                            Console.WriteLine($"({arr[lo]}, {arr[i]}, {arr[hi]})");
-
+                        Console.WriteLine($"({arr[i]}, {arr[lo]}, {arr[hi]})");
+                        lo++;
                         hi--;
                     }
                 }
