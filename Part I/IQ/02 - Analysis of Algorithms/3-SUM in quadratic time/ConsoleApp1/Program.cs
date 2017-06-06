@@ -17,12 +17,6 @@ namespace ConsoleApp1
 
                 while (lo < hi)
                 {
-                    if (hi == i)
-                    {
-                        hi--;
-                        continue;
-                    }
-
                     int sum = x + arr[lo] + arr[hi];
                     if (sum > 0)
                         hi--;
