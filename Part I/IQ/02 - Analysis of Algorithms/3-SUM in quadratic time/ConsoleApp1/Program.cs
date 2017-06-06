@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
@@ -7,7 +6,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] arr = { -7, -5, -4, -2, 0, 1, 3, 5, 6 };
+            int[] arr = { -10, -7, -5, -4, -2, -1, 0, 1, 2, 3, 5, 6 };
             // Array.Sort(arr);
 
             for (int i = 0; i < arr.Length; i++)
@@ -18,18 +17,12 @@ namespace ConsoleApp1
 
                 while (lo < hi)
                 {
-                    //if (lo == i)
-                    //{
-                    //    lo++;
-                    //    continue;
-                    //}
+                    if (hi == i)
+                    {
+                        hi--;
+                        continue;
+                    }
 
-                    //if (hi == i)
-                    //{
-                    //    hi--;
-                    //    continue;
-                    //}
-                    
                     int sum = x + arr[lo] + arr[hi];
                     if (sum > 0)
                         hi--;
@@ -44,7 +37,7 @@ namespace ConsoleApp1
                         else
                             Console.WriteLine($"({arr[lo]}, {arr[i]}, {arr[hi]})");
 
-                        break;
+                        hi--;
                     }
                 }
             }
