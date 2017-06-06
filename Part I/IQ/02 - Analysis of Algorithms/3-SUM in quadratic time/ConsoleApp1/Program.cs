@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
@@ -6,34 +7,49 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] arr = { -7, -5, -4, -3, -3, 0, 1, 2, 3, 4, 5, 6 };
+            int[] arr = { -7, -5, -4, -2, 0, 1, 3, 5, 6 };
             // Array.Sort(arr);
 
             for (int i = 0; i < arr.Length; i++)
             {
                 int x = arr[i];
-                int lo = 0;
+                int lo = i + 1;
                 int hi = arr.Length - 1;
 
                 while (lo < hi)
                 {
-                    int y = arr[lo];
-                    int z = arr[hi];
-                    int sum = y + z;
+                    //if (lo == i)
+                    //{
+                    //    lo++;
+                    //    continue;
+                    //}
 
-                    if (hi == i || sum > x)
+                    //if (hi == i)
+                    //{
+                    //    hi--;
+                    //    continue;
+                    //}
+                    
+                    int sum = x + arr[lo] + arr[hi];
+                    if (sum > 0)
                         hi--;
-                    else if (lo == i || sum < x)
+                    else if (sum < 0)
                         lo++;
                     else
                     {
-                        Console.WriteLine($"({arr[lo]},{arr[i]},{arr[hi]})");
+                        if (i < lo)
+                            Console.WriteLine($"({arr[i]}, {arr[lo]}, {arr[hi]})");
+                        else if (i > hi)
+                            Console.WriteLine($"({arr[lo]}, {arr[hi]}, {arr[i]})");
+                        else
+                            Console.WriteLine($"({arr[lo]}, {arr[i]}, {arr[hi]})");
+
                         break;
                     }
                 }
             }
 
-            Console.ReadLine();
+            Console.ReadKey();
         }
     }
 }
