@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
@@ -6,62 +7,41 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int n = 42;
+            int n = 20;
+            int density = 3;
+
+            // create array of random distinct integers
+            var rand = new Random();
             int[] arr = new int[n];
+            int range = n * density;
+            var set = new HashSet<int>();
             for (int i = 0; i < n; i++)
             {
-                if (i % 2 == 0)
-                    arr[i / 2] = i;
-                else
-                    arr[n - 1 - (i / 2)] = i;
+                int x = rand.Next(range);
+                while (set.Contains(x))
+                {
+                    x = rand.Next(range);
+                }
+                set.Add(x);
             }
-            foreach (var i in arr)
+            set.CopyTo(arr);
+
+            // create and print bitonic
+            var bitonic = new BitonicArray<int>(arr);
+            foreach (var i in bitonic.ToArray())
                 Console.Write($"{i} ");
             Console.WriteLine();
 
+            // test
             Console.WriteLine("x\t n\t 3logn\t 2logn2");
-            for (int i = -1; i <= n; i++)
+            var rnd = new Random();
+            for (int i = 0; i < n; i++)
             {
-                Console.WriteLine($"{i}\t{FindIndexLinear(arr, i)}\t{FindIndex3Logarithmic(arr, i)}\t{FindIndex2Logarithmic(arr, i)}");
+                int j = rnd.Next(n * density);
+                Console.WriteLine($"{j}\t{bitonic.FindLinear(j)}\t{bitonic.FindLogarithmicBad(j)}\t{bitonic.FindLogarithmicGood(j)}");
             }
 
             Console.ReadKey();
-        }
-
-        private static int FindIndexLinear(int[] arr, int x)
-        {
-            for (int i = 0; i < arr.Length; i++)
-            {
-                if (arr[i] == x)
-                    return i;
-            }
-            return -1;
-        }
-
-        private static int FindIndex3Logarithmic(int[] arr, int x)
-        {
-            int lo = -1;
-            int hi = arr.Length;
-            
-            while (hi - lo > 1)
-            {
-                int m1 = lo + ((hi - lo) / 2); // 1/2
-                int m2 = m1 + ((hi - m1) / 2); // 3/4
-
-                if (arr[m1] < arr[m2])
-                    lo = m1;
-                else
-                    hi = m2;
-            }
-
-            return hi < arr.Length ? hi : -1;
-        }
-
-        private static int FindIndex2Logarithmic(int[] arr, int x)
-        {
-            // TODO
-
-            return -1;
         }
     }
 }
