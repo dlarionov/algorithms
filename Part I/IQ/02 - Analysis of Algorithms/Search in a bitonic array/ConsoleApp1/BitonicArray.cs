@@ -1,32 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
-    public class BitonicArray<T> where T : IComparable<T>
+    public class BitonicArray
     {
-        readonly T[] _bitonic;
+        readonly int[] _bitonic;
 
-        public BitonicArray(T[] unsortedArray)
+        public BitonicArray(int[] bitonic)
         {
-            int n = unsortedArray.Length;
-            _bitonic = new T[unsortedArray.Length];
-            Array.Copy(unsortedArray, _bitonic, n);
-            int mid = new Random().Next(0, n);
-            Array.Sort(_bitonic, 0, mid);
-            Array.Sort(_bitonic, mid, n - mid, new ReverseComparer<T>());
+            _bitonic = bitonic ?? throw new ArgumentNullException();
         }
 
-        public T[] ToArray()
+        public int[] ToArray()
         {
             return _bitonic;
         }
 
-        public int FindLinear(T value)
+        public int FindLinear(int value)
         {
             for (int i = 0; i < _bitonic.Length; i++)
             {
-                if (value.CompareTo(_bitonic[i]) == 0)
+                if (_bitonic[i] == value)
                     return i;
             }
             return -1;
@@ -35,27 +29,26 @@ namespace ConsoleApp1
         /// <summary>
         /// 3*log(n)
         /// </summary>
-        public int FindLogarithmicBad(T value)
+        public int FindLogarithmicBad(int value)
         {
-            int i = FindMax(_bitonic);
-            int r = BinarySearch(_bitonic, 0, i, value);
-            return r < 0
-                ? BinarySearch(_bitonic, i, _bitonic.Length - i, value, new ReverseComparer<T>())
-                : r;
+            int maximum = FindMax();
+            int result = BinarySearch(0, maximum, value);
+            return result < 0
+                ? BinarySearch(maximum, _bitonic.Length - maximum, value, false)
+                : result;
         }
 
-        // http://algs4.cs.princeton.edu/14analysis/BitonicMax.java.html
-        private static int FindMax(T[] arr)
+        private int FindMax()
         {
-            // l is the left index of the array minus one
+            // lo is the left index of the array minus one
             // we never call arr[-1] so there is nothing wrong
             int lo = -1;
-            int hi = arr.Length - 1;
+            int hi = _bitonic.Length - 1;
             int mid;
-            while (hi - lo > 1) // lo < mid < hi
+            while (hi - lo > 1) // (lo, hi]
             {
                 mid = lo + ((hi - lo) / 2);
-                if (arr[mid].CompareTo(arr[mid + 1]) < 0)
+                if (_bitonic[mid] < _bitonic[mid + 1])
                     lo = mid;
                 else
                     hi = mid;
@@ -63,40 +56,35 @@ namespace ConsoleApp1
             return hi;
         }
 
-        // https://github.com/dotnet/corefx/blob/6dd451f51451a7d0ceea6104b51bd17005e9a0e6/src/System.Runtime.Extensions/src/System/Collections/ArrayList.cs
-        private static int BinarySearch(T[] arr, int index, int count, T value, IComparer<T> comparer = null)
+        private int BinarySearch(int index, int count, int value, bool asc = true)
         {
             if (index < 0 || count < 0)
                 throw new ArgumentOutOfRangeException();
-            if (arr.Length < index  + count)
+            if (_bitonic.Length < index + count)
                 throw new ArgumentException();
 
-            if (comparer == null)
-                comparer = Comparer<T>.Default;
+            if (count == 0)
+                return -1;
 
-            int lo = index;
+            int lo = index - 1;
             int hi = index + count - 1;
             int mid;
-            while (lo <= hi)
+            while (hi - lo > 1) // (lo, hi]
             {
                 mid = lo + ((hi - lo) / 2);
-                int r = comparer.Compare(value, arr[mid]);
-                if (r == 0)
-                    return mid;
-                if (r < 0)
-                    hi = mid - 1;
+                if ((asc && _bitonic[mid] < value) || (!asc && _bitonic[mid] > value))
+                    lo = mid;
                 else
-                    lo = mid + 1;
+                    hi = mid;
             }
-            // return bitwise complement of the first element greater than value.
-            // Since hi is less than lo now, ~lo is the correct item.
-            return ~lo;
+
+            return _bitonic[hi] == value ? hi : -1;
         }
 
         /// <summary>
         /// 2*log(n)
         /// </summary>
-        public int FindLogarithmicGood(T value)
+        public int FindLogarithmicGood(int value)
         {
             // TODO
 

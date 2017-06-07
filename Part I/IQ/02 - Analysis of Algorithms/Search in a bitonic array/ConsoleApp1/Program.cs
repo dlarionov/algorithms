@@ -7,8 +7,9 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int n = 20;
+            int n = 100000;
             int density = 3;
+            int tries = 20;
 
             // create array of random distinct integers
             var rand = new Random();
@@ -26,19 +27,21 @@ namespace ConsoleApp1
             }
             set.CopyTo(arr);
 
-            // create and print bitonic
-            var bitonic = new BitonicArray<int>(arr);
-            foreach (var i in bitonic.ToArray())
-                Console.Write($"{i} ");
-            Console.WriteLine();
+            // make array bitonic
+            int mid = new Random().Next(0, n);
+            Array.Sort(arr, 0, mid);
+            Array.Sort(arr, mid, n - mid, new ReverseComparer<int>());
+
+            // create bitonic
+            var bitonic = new BitonicArray(arr);
 
             // test
-            Console.WriteLine("x\t n\t 3logn\t 2logn2");
+            Console.WriteLine($"n={n} density={density} tries={tries}\nx\tn\t3lgn\t2lgn");
             var rnd = new Random();
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < tries; i++)
             {
-                int j = rnd.Next(n * density);
-                Console.WriteLine($"{j}\t{bitonic.FindLinear(j)}\t{bitonic.FindLogarithmicBad(j)}\t{bitonic.FindLogarithmicGood(j)}");
+                int x = rnd.Next(n * density);
+                Console.WriteLine($"{x}\t{bitonic.FindLinear(x)}\t{bitonic.FindLogarithmicBad(x)}\t{bitonic.FindLogarithmicGood(x)}");
             }
 
             Console.ReadKey();
