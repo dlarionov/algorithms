@@ -10,9 +10,10 @@ namespace ConsoleApp1
             int size = 100;
             int density = 3;
             int range = size * density;
-            int tries = 1000000;
+            int tries = 10000;
             int searches = 10;
             var rnd = new Random();
+            int errors = 0;
 
             for (int j = 0; j < tries; j++)
             { 
@@ -36,6 +37,7 @@ namespace ConsoleApp1
                 Array.Sort(arr, mid, size - mid, new ReverseComparer<int>());
 
                 // create and test bitonic
+                
                 var bitonic = new BitonicArray(arr);
                 for (int i = 0; i < searches; i++)
                 {
@@ -45,11 +47,14 @@ namespace ConsoleApp1
                     int c = bitonic.FindLogarithmicGood(x);
 
                     if (a != b || a != c)
+                    {
                         Console.WriteLine($"{x}\t{a}\t{b}\t{c}");
+                        errors++;
+                    }
                 }
             }
 
-            Console.WriteLine("Press any key...");
+            Console.WriteLine($"\nTotal searches: {tries * searches}; errors: {errors}\nPress any key...");
             Console.ReadKey();
         }
     }

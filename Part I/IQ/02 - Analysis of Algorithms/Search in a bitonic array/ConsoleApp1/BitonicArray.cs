@@ -116,21 +116,25 @@ namespace ConsoleApp1
         /// </summary>
         public int FindLogarithmicGood(int value)
         {
-            int lo = -1; // TODO it should be zero
+            int lo = -1;
             int hi = _bitonic.Length - 1;
             int mid;
             while (hi - lo > 1)
             {
                 mid = lo + ((hi - lo) / 2);
-                if (_bitonic[mid] < value)
+                if (value < _bitonic[mid])
+                {
+                    if (lo < 0)
+                        lo = 0;
+                    return DownSearch(lo, hi - lo + 1, mid, value);
+                }
+                else
                 {
                     if (_bitonic[mid] < _bitonic[mid + 1])
                         lo = mid;
                     else
                         hi = mid;
                 }
-                else
-                    return DownSearch(lo + 1, hi - lo, mid, value);
             }
 
             return _bitonic[hi] == value ? hi : -1;
