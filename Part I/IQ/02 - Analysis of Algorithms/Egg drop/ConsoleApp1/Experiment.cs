@@ -55,6 +55,11 @@ namespace ConsoleApp1
             return hi;
         }
 
+        /// <summary>
+        /// 1 egg, ≤T tosses.
+        /// </summary>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
         public int Version0(int tosses)
         {
             int i = 0;
@@ -66,11 +71,23 @@ namespace ConsoleApp1
             return i;
         }
 
+        /// <summary>
+        /// ∼1lgn eggs and ∼1lgn tosses.
+        /// </summary>
+        /// <param name="eggs"></param>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
         public int Version1(int eggs, int tosses)
         {
             return BinarySearch(1, _height, ref eggs, ref tosses);
         }
 
+        /// <summary>
+        /// ∼lgT eggs and ∼2lgT tosses.
+        /// </summary>
+        /// <param name="eggs"></param>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
         public int Version2(int eggs, int tosses)
         {
             int x = 1;
@@ -89,6 +106,32 @@ namespace ConsoleApp1
             }
 
             return BinarySearch(x / 2 + 1, _height, ref eggs, ref tosses);
+        }
+
+        /// <summary>
+        /// 2 eggs and ∼2n√ tosses.
+        /// </summary>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
+        public int Version3(int tosses)
+        {
+            int sqrt = (int)Math.Sqrt(_height);
+            int x = sqrt;
+            while (!Drop(x))
+            {
+                if (--tosses < 1)
+                    return -1;
+                x = x + sqrt;
+            }
+
+            x = x - sqrt;
+            while (!Drop(++x))
+            {
+                if (--tosses < 1)
+                    return -1;
+            }
+
+            return x;
         }
     }
 }

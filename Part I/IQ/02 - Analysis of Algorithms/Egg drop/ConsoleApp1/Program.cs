@@ -7,7 +7,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             int max = 100;
-            int tries = 100000;
+            int tries = 1000000;
             var rnd = new Random();
             int errors = 0;
 
@@ -19,15 +19,17 @@ namespace ConsoleApp1
                 int t = rnd.Next(1, n + 1);
                 int logn = (int)Math.Ceiling(Math.Log(n, 2));
                 int logt = (int)Math.Ceiling(Math.Log(t, 2));
+                int sqrtn = (int)Math.Ceiling(Math.Sqrt(n));
 
                 var ex = new Experiment(n, t);
                 int t0 = ex.Version0(t);
                 int t1 = ex.Version1(logn + 1, logn + 1);
                 int t2 = ex.Version2(logt + 2, 2 * (logt + 1));
+                int t3 = ex.Version3(2 * sqrtn - 1);
 
-                if (t != t0 || t != t1 || t != t2)
+                if (t != t0 || t != t1 || t != t2 || t != t3)
                 {
-                    Console.WriteLine($"{n}\t{t0}\t{t1}\t{t2}");
+                    Console.WriteLine($"{n}\t{t0}\t{t1}\t{t2}\t{t3}");
                     errors++;
                 }
             }
