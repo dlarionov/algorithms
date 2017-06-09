@@ -16,9 +16,43 @@ namespace ConsoleApp1
             _floor = t;
         }
 
-        private bool Drop(int floor)
+        public bool Drop(int floor)
         {
             return floor >= _floor;
+        }
+
+        /// <summary>
+        /// Search the floor from wich Drop() is true
+        /// </summary>
+        /// <param name="lo">bottom floor</param>
+        /// <param name="hi">top floor</param>
+        /// <param name="eggs"></param>
+        /// <param name="tosses"></param>
+        /// <returns>floor from wich Drop() is true</returns>
+        public int BinarySearch(int lo, int hi, ref int eggs, ref int tosses)
+        {
+            if (lo < 1 || hi < 1 || lo > hi)
+                throw new ArgumentOutOfRangeException();
+            if (_height < hi - lo + 1)
+                throw new ArgumentException();
+
+            lo--; // (lo;hi] "lo minus one" trick
+            int mid;
+            while (hi - lo > 1)
+            {
+                mid = lo + (hi - lo) / 2;
+                var fail = Drop(mid);
+                if (--tosses < 1)
+                    return -1;
+                if (fail && --eggs < 1)
+                    return -2;
+                if (fail)
+                    hi = mid;
+                else
+                    lo = mid;
+            }
+
+            return hi;
         }
 
         public int Version0(int tosses)
@@ -34,24 +68,27 @@ namespace ConsoleApp1
 
         public int Version1(int eggs, int tosses)
         {
-            int lo = 0;
-            int hi = _height;
-            int mid;
-            while (hi - lo > 1)
+            return BinarySearch(1, _height, ref eggs, ref tosses);
+        }
+
+        public int Version2(int eggs, int tosses)
+        {
+            int x = 1;
+            while (x <= _height)
             {
-                mid = lo + (hi - lo) / 2;
-                var broken = Drop(mid);
+                var fail = Drop(x);
                 if (--tosses < 1)
                     return -1;
-                if (broken && --eggs < 1)
-                    return -2;
-                if (broken)
-                    hi = mid;
-                else
-                    lo = mid;
+                if (fail)
+                {
+                    eggs--;
+                    return BinarySearch(x > 1 ? x / 2 : 1, x, ref eggs, ref tosses);
+                }
+
+                x = x * 2;
             }
 
-            return hi;
+            return BinarySearch(x / 2, _height, ref eggs, ref tosses);
         }
     }
 }
