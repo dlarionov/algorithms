@@ -47,8 +47,7 @@ namespace ConsoleApp1
         public int FindMax()
         {
             // lo is the left index of the array minus one
-            // This trick makes it easier to work with the boundaries of a segment
-            // We never call A[-1] so there is nothing wrong
+            // This trick makes it easier to work with borders
             int lo = -1;
             int hi = _bitonic.Length - 1;
             int mid;
@@ -114,9 +113,12 @@ namespace ConsoleApp1
         /// <summary>
         /// ~ 2*log(n)
         /// </summary>
+        /// <returns>array index</returns>
         public int FindLogarithmicGood(int value)
         {
-            int lo = -1;
+            // no "lo minus one" trick, 
+            // we should check A[lo] and A[hi] at the end
+            int lo = 0;
             int hi = _bitonic.Length - 1;
             int mid;
             while (hi - lo > 1)
@@ -124,8 +126,6 @@ namespace ConsoleApp1
                 mid = lo + ((hi - lo) / 2);
                 if (value < _bitonic[mid])
                 {
-                    if (lo < 0)
-                        lo = 0;
                     return DownSearch(lo, hi - lo + 1, mid, value);
                 }
                 else
@@ -137,7 +137,11 @@ namespace ConsoleApp1
                 }
             }
 
-            return _bitonic[hi] == value ? hi : -1;
+            return _bitonic[lo] == value 
+                ? lo 
+                : _bitonic[hi] == value 
+                    ? hi 
+                    : -1;
         }
     }
 }

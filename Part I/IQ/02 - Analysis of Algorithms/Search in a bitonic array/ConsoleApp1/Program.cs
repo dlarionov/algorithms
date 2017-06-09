@@ -7,16 +7,16 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int size = 100;
+            int size = 10;
             int density = 3;
             int range = size * density;
-            int tries = 10000;
+            int tries = 1000000;
             int searches = 10;
             var rnd = new Random();
             int errors = 0;
 
             for (int j = 0; j < tries; j++)
-            { 
+            {
                 // create array of random distinct integers
                 int[] arr = new int[size];
                 var set = new HashSet<int>();
@@ -37,7 +37,7 @@ namespace ConsoleApp1
                 Array.Sort(arr, mid, size - mid, new ReverseComparer<int>());
 
                 // create and test bitonic
-                
+
                 var bitonic = new BitonicArray(arr);
                 for (int i = 0; i < searches; i++)
                 {
@@ -49,12 +49,15 @@ namespace ConsoleApp1
                     if (a != b || a != c)
                     {
                         Console.WriteLine($"{x}\t{a}\t{b}\t{c}");
+                        //foreach (var k in bitonic.ToArray())
+                        //    Console.Write($"{k} ");
+                        //Console.WriteLine();
                         errors++;
                     }
                 }
             }
 
-            Console.WriteLine($"\nTotal searches: {tries * searches}; errors: {errors}\nPress any key...");
+            Console.WriteLine($"\nTotal tries: {tries} * {searches}; errors: {errors}\nPress any key...");
             Console.ReadKey();
         }
     }
