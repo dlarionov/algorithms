@@ -7,6 +7,11 @@ namespace ConsoleApp1
         readonly int _height;
         readonly int _floor;
 
+        /// <summary>
+        /// Suppose that you have an n-story building (with floors 1 through n) and plenty of eggs.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="t"></param>
         public Experiment(int n, int t)
         {
             if (n < 1 || t < 1 || t > n)
@@ -16,9 +21,30 @@ namespace ConsoleApp1
             _floor = t;
         }
 
+        /// <summary>
+        /// An egg breaks if it is dropped from floor T or higher and does not break otherwise.
+        /// </summary>
+        /// <param name="floor"></param>
+        /// <returns></returns>
         public bool Drop(int floor)
         {
             return floor >= _floor;
+        }
+
+        /// <summary>
+        /// 1 egg, ≤T tosses.
+        /// </summary>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
+        public int Version0(int tosses)
+        {
+            int i = 0;
+            while (!Drop(++i))
+            {
+                if (--tosses < 1)
+                    return -1;
+            }
+            return i;
         }
 
         /// <summary>
@@ -53,22 +79,6 @@ namespace ConsoleApp1
             }
 
             return hi;
-        }
-
-        /// <summary>
-        /// 1 egg, ≤T tosses.
-        /// </summary>
-        /// <param name="tosses"></param>
-        /// <returns></returns>
-        public int Version0(int tosses)
-        {
-            int i = 0;
-            while (!Drop(++i))
-            {
-                if (--tosses < 1)
-                    return -1;
-            }
-            return i;
         }
 
         /// <summary>
@@ -109,13 +119,13 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// 2 eggs and ∼2n√ tosses.
+        /// 2 eggs and ∼2√n tosses.
         /// </summary>
         /// <param name="tosses"></param>
         /// <returns></returns>
         public int Version3(int tosses)
         {
-            int sqrt = (int)Math.Sqrt(_height);
+            int sqrt = (int)Math.Ceiling(Math.Sqrt(_height));
             int x = sqrt;
             while (!Drop(x))
             {
@@ -125,6 +135,32 @@ namespace ConsoleApp1
             }
 
             x = x - sqrt;
+            while (!Drop(++x))
+            {
+                if (--tosses < 1)
+                    return -1;
+            }
+
+            return x;
+        }
+
+        /// <summary>
+        /// 2 eggs and ≤c√T tosses for some fixed constant c.
+        /// </summary>
+        /// <param name="tosses"></param>
+        /// <returns></returns>
+        public int Version4(int tosses)
+        {
+            int sqrt = (int)Math.Ceiling(Math.Sqrt(2 * _height));
+            int x = sqrt;
+            while (!Drop(x))
+            {
+                if (--tosses < 1)
+                    return -1;
+                x = x + --sqrt;
+            }
+
+            x = x - sqrt - 1;
             while (!Drop(++x))
             {
                 if (--tosses < 1)
