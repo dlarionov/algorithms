@@ -7,7 +7,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int size = 10;
+            int size = 100;
             int density = 3;
             int range = size * density;
             int tries = 1000000;
@@ -37,7 +37,6 @@ namespace ConsoleApp1
                 Array.Sort(arr, mid, size - mid, new ReverseComparer<int>());
 
                 // create and test bitonic
-
                 var bitonic = new BitonicArray(arr);
                 for (int i = 0; i < searches; i++)
                 {
@@ -49,9 +48,6 @@ namespace ConsoleApp1
                     if (a != b || a != c)
                     {
                         Console.WriteLine($"{x}\t{a}\t{b}\t{c}");
-                        //foreach (var k in bitonic.ToArray())
-                        //    Console.Write($"{k} ");
-                        //Console.WriteLine();
                         errors++;
                     }
                 }

@@ -64,7 +64,7 @@ namespace ConsoleApp1
 
         /// <summary>
         /// ~ 2 log (n)
-        /// Can be used when A[mid] >= value or mid = maximum
+        /// Can be used only if A[mid] >= value or mid = maximum
         /// </summary>
         /// <returns>array index</returns>
         public int DownSearch(int index, int count, int mid, int value)
@@ -116,8 +116,6 @@ namespace ConsoleApp1
         /// <returns>array index</returns>
         public int FindLogarithmicGood(int value)
         {
-            // no "lo minus one" trick, 
-            // we should check A[lo] and A[hi] at the end
             int lo = 0;
             int hi = _bitonic.Length - 1;
             int mid;
@@ -126,6 +124,7 @@ namespace ConsoleApp1
                 mid = lo + ((hi - lo) / 2);
                 if (value < _bitonic[mid])
                 {
+                    // _bitonic[mid] >= value
                     return DownSearch(lo, hi - lo + 1, mid, value);
                 }
                 else
@@ -137,10 +136,10 @@ namespace ConsoleApp1
                 }
             }
 
-            return _bitonic[lo] == value 
-                ? lo 
-                : _bitonic[hi] == value 
-                    ? hi 
+            return _bitonic[hi] == value 
+                ? hi
+                : _bitonic[lo] == value 
+                    ? lo
                     : -1;
         }
     }
