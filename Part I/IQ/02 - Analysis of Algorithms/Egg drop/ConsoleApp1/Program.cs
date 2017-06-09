@@ -11,8 +11,6 @@ namespace ConsoleApp1
             var rnd = new Random();
             int errors = 0;
 
-            // new Experiment(5, 3).Version2(100, 100);
-
             for (int j = 0; j < tries; j++)
             {
                 int n = rnd.Next(1, max);
