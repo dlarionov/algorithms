@@ -82,13 +82,13 @@ namespace ConsoleApp1
                 if (fail)
                 {
                     eggs--;
-                    return BinarySearch(x > 1 ? x / 2 : 1, x, ref eggs, ref tosses);
+                    return BinarySearch(x > 1 ? x / 2 + 1 : 1, x, ref eggs, ref tosses);
                 }
 
                 x = x * 2;
             }
 
-            return BinarySearch(x / 2, _height, ref eggs, ref tosses);
+            return BinarySearch(x / 2 + 1, _height, ref eggs, ref tosses);
         }
     }
 }
