@@ -6,48 +6,31 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] a = new int[] { 5, 4, 3, 2, 1, 1 };
-            int[] b = new int[] { 2, 1, 1, 5, 4, 3 };
+            int n = 10;
+            int tries = 100;
+            var rnd = new Random();
+            int errors = 0;
 
-            InsertionSort(a);
-            InsertionSort(b);
-
-            bool eq = a.Length == b.Length;
-            if (eq)
+            for (int j = 0; j < tries; j++)
             {
-                for (int i = 0; i < a.Length; i++)
+                int[] a = new int[n];
+                for (int i = 0; i < n; i++)
                 {
-                    if (a[i] != b[i])
-                    {
-                        eq = false;
-                        break;
-                    }
+                    a[i] = rnd.Next(3);
+                }
+
+                var passed = new ThreeColor(a).Test();
+                if (!passed)
+                {
+                    errors++;
+                    foreach (var i in a)
+                        Console.Write($"{i} ");
+                    Console.WriteLine();
                 }
             }
 
-            Console.WriteLine(eq);
+            Console.WriteLine($"Total tries: {tries}; errors: {errors}\nPress any key...");
             Console.ReadKey();
-        }
-
-        private static void InsertionSort(int[] a)
-        {
-            for (int i = 0; i < a.Length; i++)
-            {
-                for (int j = i; j > 0; j--)
-                {
-                    if (a[j] < a[j - 1])
-                        Swap(a, j, j - 1);
-                    else
-                        break;
-                }
-            }
-        }
-
-        private static void Swap(int[] a, int i, int j)
-        {
-            int swap = a[i];
-            a[i] = a[j];
-            a[j] = swap;
         }
     }
 }
