@@ -6,8 +6,10 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            // var r = new ThreeColor(new int[] { 0, 1, 2, 1, 1, 1 }).Test();
+
             int n = 10;
-            int tries = 100;
+            int tries = 10;
             var rnd = new Random();
             int errors = 0;
 
