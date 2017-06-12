@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleApp1
+﻿namespace ConsoleApp1
 {
     public class ThreeColor
     {
@@ -10,133 +8,29 @@ namespace ConsoleApp1
 
         public ThreeColor(int[] arr)
         {
-            int n = arr.Length;
-            if (n < 3)
-                throw new ArgumentOutOfRangeException();
+            _arr = arr;
 
-            _arr = new int[n];
-            for (int i = 0; i < n; i++)
+            int i = 0;
+            int j = 0;
+            int k = _arr.Length - 1;
+
+            while (j <= k)
             {
-                _arr[i] = arr[i];
-            }
-
-            int index = 0;
-            int x0 = 0;
-            int y0 = 1;
-            int z0 = 2;
-            int x1 = 0;
-            int y1 = 1;
-            int z1 = 2;
-
-            while (index < n)
-            {
-                int row = index % 3;
-                switch (row)
+                var r = Color(_arr[j]);
+                if (r < 0)
                 {
-                    case 0: if (x0 > index) { index++; continue; } break;
-                    case 1: if (y0 > index) { index++; continue; } break;
-                    case 2: if (z0 > index) { index++; continue; } break;
+                    Swap(i, j);
+                    i++;
+                    j++;
                 }
-
-                var clr = Color(_arr[index]);
-                switch (clr)
+                else if (r > 0)
                 {
-                    case 0:
-                        if (index == x0)
-                        {
-                            index++;
-                            x0 = x0 + 3;
-                        }
-                        else
-                        {
-                            if (x0 >= n)
-                            {
-                                if (row == 1)
-                                {
-                                    Swap(index, y1);
-                                    y1 = y1 + 3;
-                                    if (y1 > y0)
-                                        y0 = y1;
-                                }
-                                else if (row == 2)
-                                {
-                                    Swap(index, z1);
-                                    z1 = z1 + 3;
-                                    if (z1 > z0)
-                                        z0 = z1;
-                                }
-                            }
-                            else
-                            {
-                                Swap(index, x0);
-                                x0 = x0 + 3;
-                            }
-                        }
-                        break;
-                    case 1:
-                        if (index == y0)
-                        {
-                            index++;
-                            y0 = y0 + 3;
-                        }
-                        else
-                        {
-                            if (y0 >= n)
-                            {
-                                if (row == 2)
-                                {
-                                    Swap(index, z1);
-                                    z1 = z1 + 3;
-                                    if (z1 > z0)
-                                        z0 = z1;
-                                }
-                                else if (row == 0)
-                                {
-                                    Swap(index, x1);
-                                    x1 = x1 + 3;
-                                    if (x1 > x0)
-                                        x0 = x1;
-                                }
-                            }
-                            else
-                            {
-                                Swap(index, y0);
-                                y0 = y0 + 3;
-                            }
-                        }
-                        break;
-                    case 2:
-                        if (index == z0)
-                        {
-                            index++;
-                            z0 = z0 + 3;
-                        }
-                        else
-                        {
-                            if (z0 >= n)
-                            {
-                                if (row == 0)
-                                {
-                                    Swap(index, x1);
-                                    x1 = x1 + 3;
-                                    if (x1 > x0)
-                                        x0 = x1;
-                                }
-                                else if (row == 1)
-                                {
-                                    Swap(index, y1);
-                                    y1 = y1 + 3;
-                                    if (y1 > y0)
-                                        y0 = y1;
-                                }
-                            }
-                            else
-                            {
-                                Swap(index, z0);
-                                z0 = z0 + 3;
-                            }
-                        }
-                        break;
+                    Swap(j, k);
+                    k--;
+                }
+                else
+                {
+                    j++;
                 }
             }
         }

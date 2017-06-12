@@ -6,10 +6,8 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            // var r = new ThreeColor(new int[] { 0, 1, 2, 1, 1, 1 }).Test();
-
-            int n = 10;
-            int tries = 10;
+            int n = 100;
+            int tries = 10000;
             var rnd = new Random();
             int errors = 0;
 
@@ -18,7 +16,7 @@ namespace ConsoleApp1
                 int[] a = new int[n];
                 for (int i = 0; i < n; i++)
                 {
-                    a[i] = rnd.Next(3);
+                    a[i] = rnd.Next(-1, 2);
                 }
 
                 var passed = new ThreeColor(a).Test();
