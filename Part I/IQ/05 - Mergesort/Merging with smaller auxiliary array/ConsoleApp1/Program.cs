@@ -6,7 +6,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] a = new int[] { 5, -2, 4, 42, 0, 0, 3, 2, 1, 1 };
+            int[] a = new int[] { 5, -2, 4, 42, 0, 3, 2, 1 };
             MergeSort(a);
             foreach (var i in a)
                 Console.Write($"{i} ");
@@ -27,7 +27,7 @@ namespace ConsoleApp1
             int mid = lo + (hi - lo) / 2;
             Sort(a, aux, lo, mid);
             Sort(a, aux, mid + 1, hi);
-            Merge(a, aux, lo, mid, hi);
+            Merge2(a, aux, lo, mid, hi);
         }
 
         private static void Merge(int[] a, int[] aux, int lo, int mid, int hi)
@@ -48,6 +48,56 @@ namespace ConsoleApp1
                 else
                     a[k] = aux[i++];
             }
+        }
+
+        private static void Merge2(int[] a, int[] aux, int lo, int mid, int hi)
+        {
+            Console.WriteLine($"({lo}, {mid}, {hi})");
+            for (int k = lo; k <= hi; k++)
+                Console.Write($"{a[k]} ");
+            Console.WriteLine();
+
+            for (int k = lo; k <= mid; k++)
+                aux[k] = a[k];
+
+            int i = lo;
+            int j = mid + 1;
+            for (int k = lo; k <= mid; k++)
+            {
+                if (i > mid)
+                    a[k] = aux[j++];
+                else if (j > hi)
+                    a[k] = aux[i++];
+                else if (a[j] < aux[i])
+                    a[k] = a[j++];
+                else
+                    a[k] = aux[i++];
+            }
+
+            int separator = 0;
+            for (int k = lo; k <= hi - j; k++)
+            {
+                aux[k] = a[k + j];
+                separator++;
+            }
+
+            j = i;
+            i = lo;
+            for (int k = mid + 1; k <= hi; k++)
+            {
+                if (i > separator)
+                    a[k] = aux[j++];
+                else if (j > mid)
+                    a[k] = aux[i++];
+                else if (aux[j] < aux[i])
+                    a[k] = aux[j++];
+                else
+                    a[k] = aux[i++];
+            }
+
+            for (int k = lo; k <= hi; k++)
+                Console.Write($"{a[k]} ");
+            Console.WriteLine();
         }
     }
 }
