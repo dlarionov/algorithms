@@ -6,11 +6,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] a = new int[] { 5, -2, 4, 42, 0, 3, 2, 1 };
-            MergeSort(a);
-            foreach (var i in a)
-                Console.Write($"{i} ");
-            Console.WriteLine();
+            MergeSort(new int[] { 5, -2, 4, 42, 0, 3, 2, 1, 7 });
             Console.ReadKey();
         }
 
@@ -57,15 +53,15 @@ namespace ConsoleApp1
                 Console.Write($"{a[k]} ");
             Console.WriteLine();
 
-            for (int k = lo; k <= mid; k++)
-                aux[k] = a[k];
+            for (int l = 0; l <= mid - lo; l++)
+                aux[l] = a[l + lo];
 
-            int i = lo;
+            int i = 0;
             int j = mid + 1;
             for (int k = lo; k <= mid; k++)
             {
-                if (i > mid)
-                    a[k] = aux[j++];
+                if (i > mid - lo)
+                    a[k] = a[j++];
                 else if (j > hi)
                     a[k] = aux[i++];
                 else if (a[j] < aux[i])
@@ -74,20 +70,17 @@ namespace ConsoleApp1
                     a[k] = aux[i++];
             }
 
-            int separator = 0;
-            for (int k = lo; k <= hi - j; k++)
-            {
-                aux[k] = a[k + j];
-                separator++;
-            }
+            for (int l = 0; l <= hi - j; l++)
+                aux[l] = a[l + j];
 
+            int quater = hi - j;
             j = i;
-            i = lo;
+            i = 0;
             for (int k = mid + 1; k <= hi; k++)
             {
-                if (i > separator)
+                if (i > quater)
                     a[k] = aux[j++];
-                else if (j > mid)
+                else if (j > mid - lo)
                     a[k] = aux[i++];
                 else if (aux[j] < aux[i])
                     a[k] = aux[j++];
