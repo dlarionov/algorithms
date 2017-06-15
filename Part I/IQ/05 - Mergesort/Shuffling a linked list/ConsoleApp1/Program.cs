@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
     class Program
     {
+        public static Random Rnd = new Random();
+
         static void Main(string[] args)
         {
             int n = 10;
@@ -17,27 +18,27 @@ namespace ConsoleApp1
                 current = current.Next;
             }
 
-            head = Shuffle(head, n);
-
-            current = head;
-            while (current != null)
+            for (int j = 0; j < 100; j++)
             {
-                Console.Write($"{current.Id} ");
-                current = current.Next;
+                head = Shuffle(head, n);
+
+                current = head;
+                while (current != null)
+                {
+                    Console.Write($"{current.Id} ");
+                    current = current.Next;
+                }
+
+                Console.WriteLine();
             }
 
             Console.ReadKey();
         }
 
-        private static bool Rnd()
-        {
-            return new Random().Next(100) < 50;
-        }
-
         public static Node Merge(Node left, Node right)
         {
             Node root;
-            if (Rnd())
+            if (Rnd.NextDouble() >= 0.5)
             {
                 root = left;
                 left = left.Next;
@@ -48,28 +49,31 @@ namespace ConsoleApp1
                 right = right.Next;
             }
 
-            while (left != null && right != null)
+            Node node = root;
+            while (left != null || right != null)
             {
                 if (left == null)
                 {
-                    root.Next = right;
+                    node.Next = right;
                     right = right.Next;
                 }
                 else if (right == null)
                 {
-                    root.Next = left;
+                    node.Next = left;
                     left = left.Next;
                 }
-                else if (Rnd())
+                else if (Rnd.NextDouble() >= 0.5)
                 {
-                    root.Next = left;
+                    node.Next = left;
                     left = left.Next;
                 }
                 else
                 {
-                    root.Next = right;
+                    node.Next = right;
                     right = right.Next;
                 }
+
+                node = node.Next;
             }
 
             return root;
