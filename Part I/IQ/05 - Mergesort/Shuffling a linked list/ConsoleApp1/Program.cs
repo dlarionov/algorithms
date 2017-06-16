@@ -4,13 +4,11 @@ namespace ConsoleApp1
 {
     class Program
     {
-        public static Random Rnd = new Random();
-
         static void Main(string[] args)
         {
             int n = 10;
 
-            var head = new Node(); // { Id = 0 };
+            var head = new Node();
             var current = head;
             for (int i = 1; i < n; i++)
             {
@@ -35,10 +33,17 @@ namespace ConsoleApp1
             Console.ReadKey();
         }
 
+        private static Random Rnd = new Random();
+
+        private static bool Random()
+        {
+            return Rnd.NextDouble() >= 0.5;
+        }
+
         public static Node Merge(Node left, Node right)
         {
             Node root;
-            if (Rnd.NextDouble() >= 0.5)
+            if (Random())
             {
                 root = left;
                 left = left.Next;
@@ -62,7 +67,7 @@ namespace ConsoleApp1
                     node.Next = left;
                     left = left.Next;
                 }
-                else if (Rnd.NextDouble() >= 0.5)
+                else if (Random())
                 {
                     node.Next = left;
                     left = left.Next;
