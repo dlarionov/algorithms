@@ -6,39 +6,75 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] n = { 1, 3, 5, 5, 7, 31 };
-            int[] m = { 0, 0, 1, 1, 1, 2 };
-            int k = FindKth(n, m, 4);
-            Console.WriteLine(k);
+            int[] a = { 1, 3, 5, 7, 9 };
+            int[] b = { 2, 4, 6, 8 };
+
+            for (int i = 1; i <= a.Length + b.Length; i++)
+            {
+                int k = FindKth(a, b, i);
+            }
+
             Console.ReadKey();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="n"></param>
-        /// <param name="m"></param>
-        /// <param name="k">starts from zero</param>
-        /// <returns></returns>
-        public static int FindKth(int[] n, int[] m, int k)
+        public static int FindKth(int[] a, int[] b, int k)
         {
+            if (k < 1 || k > a.Length + b.Length)
+                throw new ArgumentException();
+
             int lo = -1;
-            int hi = n.Length - 1;
-            int mid;
+            int hi = a.Length - 1;
+            int i, j;
 
             while (hi - lo > 1)
             {
-                mid = lo + (hi - lo) / 2;
+                i = lo + (hi - lo) / 2;
+                j = k - i - 2;
 
-                if (k - mid < 0)
-                    lo = mid;
-                else if (n[mid] >= m[k-mid])
-                    hi = mid;
+                if (j < 0) // i + 1 >= k
+                    hi = i;
+                else if (j > b.Length - 1)
+                    lo = i;
+                else if (a[i] < b[j])
+                    hi = i;
                 else
-                    lo = mid;
+                    lo = i;
             }
 
-            return n[hi];
+            i = hi;
+            j = k - i - 2;
+
+            int r;
+            if (i + 1 >= k)
+            {
+                r = a[i];
+            }
+            else if (j > b.Length - 1)
+            {
+                r = -1; // TODO
+            }
+            else if (a[i] < b[j])
+            {
+                if (i < 1)
+                    r = b[j];
+                else
+                    r = a[i - 1] < b[j]
+                        ? a[i - 1]
+                        : b[j];
+            }
+            else
+            {
+                if (j + 1 > b.Length - 1)
+                    r = a[i];
+                else
+                    r = a[i] < b[j + 1]
+                        ? a[i]
+                        : b[j + 1];
+            }
+
+            Console.WriteLine($"Kth: {k} ({i}, {j}) {r}");
+
+            return r;
         }
     }
 }
