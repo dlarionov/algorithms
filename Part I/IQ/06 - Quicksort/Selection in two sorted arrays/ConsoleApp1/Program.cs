@@ -6,12 +6,13 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int[] a = { 1, 3, 5, 7, 9 };
-            int[] b = { 2, 4, 6, 8 };
+            int[] a = { 2, 2, 5, 8, 9 };
+            int[] b = { 4, 4, 6, 7 };
 
             for (int i = 1; i <= a.Length + b.Length; i++)
             {
                 int k = FindKth(a, b, i);
+                Console.WriteLine($"{i} {k}");
             }
 
             Console.ReadKey();
@@ -42,7 +43,7 @@ namespace ConsoleApp1
                     hi = i;
             }
 
-            // all items greather ok equal hi is is ok
+            // all items >= hi is is ok
             i = hi;
             j = k - i - 2;
             int r;
@@ -52,8 +53,6 @@ namespace ConsoleApp1
                 r = j + 1 > b.Length -1
                     ? a[i]
                     : Math.Min(a[i], b[j + 1]);
-
-            Console.WriteLine($"Kth: {k} ({lo}, {hi}) {r}");
 
             return r;
         }
