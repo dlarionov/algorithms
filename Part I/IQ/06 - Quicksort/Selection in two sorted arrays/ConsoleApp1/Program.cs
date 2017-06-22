@@ -22,8 +22,9 @@ namespace ConsoleApp1
             if (k < 1 || k > a.Length + b.Length)
                 throw new ArgumentException();
 
+            // left minus one and right pus one trick
             int lo = -1;
-            int hi = a.Length - 1;
+            int hi = a.Length;
             int i, j;
 
             while (hi - lo > 1)
@@ -31,48 +32,28 @@ namespace ConsoleApp1
                 i = lo + (hi - lo) / 2;
                 j = k - i - 2;
 
-                if (j < 0) // i + 1 >= k
+                if (j < 0)
                     hi = i;
                 else if (j > b.Length - 1)
                     lo = i;
                 else if (a[i] < b[j])
-                    hi = i;
-                else
                     lo = i;
+                else
+                    hi = i;
             }
 
+            // all items greather ok equal hi is is ok
             i = hi;
             j = k - i - 2;
-
             int r;
-            if (i + 1 >= k)
-            {
-                r = a[i];
-            }
-            else if (j > b.Length - 1)
-            {
-                r = -1; // TODO
-            }
-            else if (a[i] < b[j])
-            {
-                if (i < 1)
-                    r = b[j];
-                else
-                    r = a[i - 1] < b[j]
-                        ? a[i - 1]
-                        : b[j];
-            }
+            if (hi == a.Length)
+                r=  b[j];
             else
-            {
-                if (j + 1 > b.Length - 1)
-                    r = a[i];
-                else
-                    r = a[i] < b[j + 1]
-                        ? a[i]
-                        : b[j + 1];
-            }
+                r = j + 1 > b.Length -1
+                    ? a[i]
+                    : Math.Min(a[i], b[j + 1]);
 
-            Console.WriteLine($"Kth: {k} ({i}, {j}) {r}");
+            Console.WriteLine($"Kth: {k} ({lo}, {hi}) {r}");
 
             return r;
         }
