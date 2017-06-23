@@ -48,9 +48,9 @@ namespace ConsoleApp1
             j = k - i - 2;
             int r;
             if (hi == a.Length)
-                r=  b[j];
+                r = b[j];
             else
-                r = j + 1 > b.Length -1
+                r = j + 1 > b.Length - 1
                     ? a[i]
                     : Math.Min(a[i], b[j + 1]);
 
