@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ConsoleApp1
@@ -8,58 +9,99 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             var rnd = new Random();
-            int tries = 10;
-            int n = 100;
-            int dispersion = 10;
+            int tries = 10000;
+            int n = 10000;
+            int k = 100; // kth dominant
+            int d = 100;
+            int errors = 0;
             for (int i = 0; i < tries; i++)
             {
                 int[] a = new int[n];
                 for (int j = 0; j < n; j++)
+                    a[j] = rnd.Next(d);
+
+                int[] calc = KthDominants(a, k);
+                int[] test = KthDominantsBrute(a, k);
+
+                if (!Equals(calc, test))
                 {
-                    a[j] = rnd.Next(dispersion);
+                    //foreach (var j in calc)
+                    //    Console.Write($"{j} ");
+                    //Console.WriteLine();
+
+                    //foreach (var j in test)
+                    //    Console.Write($"{j} ");
+                    //Console.WriteLine();
+
+                    errors++;
                 }
-
-                int[] dominants = Dominants(a, n / 10);
-
-                foreach (var d in dominants)
-                    Console.Write($"{d} ");
-
-                Console.WriteLine();
             }
+            Console.WriteLine($"tries: {tries} errors: {errors}");
             Console.ReadKey();
         }
 
-        // For any general k, you require O(n log k) time.
-        // The trick is that the dominant element remains same if you delete any k distinct items from the array.
-        public static int[] Dominants(int[] arr, int k)
+        public static int[] KthDominantsBrute(int[] arr, int k)
         {
-            HashSet<int> t = new HashSet<int>();
-            int lo = 0;
-            int hi = arr.Length - 1;
-            while (lo < hi)
-            {
-                var x = arr[lo];
-                if (!t.Contains(x))
-                {
-                    t.Add(x);
+            var cnt = arr.Length / k;
+            var list = arr.GroupBy(x => x)
+                .Select(x => new { item = x.Key, count = x.Count() })
+                .Where(x => x.count >= cnt)
+                .OrderBy(x => x.item)
+                .ToList();
 
-                    Swap(arr, lo, hi--);
-                    if (t.Count > k)
-                        t.Clear();
-                }
-                else
-                    lo++;
-            }
+            //foreach (var i in list)
+            //    Console.Write($"{i.item} {i.count}\n");
 
-            return arr;
-
+            return list.Select(i => i.item).ToArray();
         }
 
-        private static void Swap(int[] arr, int i, int j)
+        // The trick is that the dominant element remains same if you delete any k distinct items from the array.
+        public static int[] KthDominants(int[] arr, int k)
         {
-            int t = arr[i];
-            arr[i] = arr[j];
-            arr[j] = t;
+            // k munus one counters
+            var list = new Dictionary<int, int>();
+            int grade = 1;
+            for (int i = 0; i < arr.Length; i++)
+            {
+                var x = arr[i];
+                if (list.ContainsKey(x))
+                    list[x]++;
+                else
+                {
+                    if (list.Count < k)
+                        list.Add(x, 1);
+                    else
+                    {
+                        foreach (var j in list.Keys.ToArray())
+                        {
+                            if (list[j] > 1)
+                                list[j]--;
+                            else
+                                list.Remove(j);
+                        }
+                        grade++;
+                    }
+                }
+            }
+
+            var cnt = arr.Length / k - grade;
+            return list
+                .Where(i => i.Value > cnt)
+                .Select(i => i.Key)
+                .OrderBy(i => i)
+                .ToArray();
+        }
+
+        public static bool Equals(int[] a, int[] b)
+        {
+            if (a.Length != b.Length)
+                return false;
+            for (int i = 0; i < a.Length; i++)
+            { 
+                if (a[i] != b[i])
+                    return false;
+            }
+            return true;
         }
     }
 }
