@@ -1,48 +1,92 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleApp1
 {
-    public class MaxPQ
+    public class MaxPQ<T> where T : IComparable<T>
     {
-        int[] _arr;
+        T[] _pq;
         int _size;
 
-        public MaxPQ(int campacity)
+        public MaxPQ()
         {
-            _arr = new int[campacity];
+            _pq = new T[4];
+        }
+
+        public int Count
+        {
+            get { return _size; }
         }
 
         private void Swap(int i, int j)
         {
-            int x = _arr[i];
-            _arr[i] = _arr[j];
-            _arr[j] = x;
+            if (i == j)
+                return;
+
+            var x = _pq[i];
+            _pq[i] = _pq[j];
+            _pq[j] = x;
         }
 
-        private void Up(int i)
+        private void Resize(int capacity)
         {
-            while (i > 1 && _arr[i] > _arr[i / 2])
+            T[] copy = new T[capacity];
+            for (int i = 0; i < _size; i++)
             {
-                Swap(i, i / 2);
-                i = i / 2;
+                copy[i] = _pq[i];
+            }
+            _pq = copy;
+        }
+
+        private void Up(int k)
+        {
+            while (k > 1 && _pq[k].CompareTo(_pq[k / 2]) > 0)
+            {
+                Swap(k, k / 2);
+                k = k / 2;
             }
         }
 
-        public void Insert(int x)
+        private void Down(int k)
         {
-            if (_size >= _arr.Length)
-                throw new OverflowException();
-
-            _arr[_size] = x;
-            Up(_size);
-            _size++;
+            while (2 * k <= _size)
+            {
+                int j = 2 * k;
+                if (j < _size && _pq[j].CompareTo(_pq[j + 1]) < 0)
+                    j++;
+                if (_pq[k].CompareTo(_pq[j]) > 0)
+                    break;
+                Swap(k, j);
+                k = j;
+            }
         }
 
-        private void Down(int i)
+        public void Push(T x)
         {
-            
+            if (_size == _pq.Length)
+            {
+                Resize(2 * _pq.Length);
+            }
+
+            // Indices start at 1
+            _pq[++_size] = x;
+            Up(_size);
+        }
+
+        public T Pop()
+        {
+            if (_size < 1)
+                throw new IndexOutOfRangeException();
+
+            if (_pq.Length == 4 * _size)
+            {
+                Resize(_pq.Length / 2);
+            }
+
+            var x = _pq[1];
+            Swap(1, _size--);
+            Down(1);
+            _pq[_size + 1] = default(T);
+            return x;
         }
     }
 }
