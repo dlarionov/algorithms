@@ -2,12 +2,12 @@
 
 namespace ConsoleApp1
 {
-    public class MaxPQ<T> where T : IComparable<T>
+    public class MinPQ<T> where T : IComparable<T>
     {
         T[] _pq;
         int _size;
 
-        public MaxPQ()
+        public MinPQ()
         {
             _pq = new T[4];
         }
@@ -40,7 +40,7 @@ namespace ConsoleApp1
 
         private void Up(int k)
         {
-            while (k > 1 && _pq[k].CompareTo(_pq[k / 2]) > 0)
+            while (k > 1 && _pq[k].CompareTo(_pq[k / 2]) < 0)
             {
                 Swap(k, k / 2);
                 k = k / 2;
@@ -52,9 +52,9 @@ namespace ConsoleApp1
             while (2 * k <= _size)
             {
                 int j = 2 * k;
-                if (j < _size && _pq[j].CompareTo(_pq[j + 1]) < 0)
+                if (j < _size && _pq[j].CompareTo(_pq[j + 1]) > 0)
                     j++;
-                if (_pq[k].CompareTo(_pq[j]) > 0)
+                if (_pq[k].CompareTo(_pq[j]) < 0)
                     break;
                 Swap(k, j);
                 k = j;
@@ -96,5 +96,6 @@ namespace ConsoleApp1
                 throw new IndexOutOfRangeException();
             return _pq[1];
         }
+
     }
 }
