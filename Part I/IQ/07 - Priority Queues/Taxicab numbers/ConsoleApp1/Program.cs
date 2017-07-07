@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ConsoleApp1
@@ -7,38 +8,31 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int n = 10000;
-            // 1729
-            for (int i = 1; i <= n; i++)
-            {
-                if (IsTaxicab(i))
-                    Console.WriteLine(i);
-            }
-            
+            int n = 100000;
+
+            foreach (var i in TaxicabNumbers1(n))
+                Console.WriteLine(i);
+
             Console.ReadKey();
         }
 
-        public static bool IsTaxicab(int x)
+        public static IEnumerable<int> TaxicabNumbers1(int n)
         {
-            int m = (int)Math.Floor(Math.Pow(x, (double)1 / 3));
-            bool flag = false;
-            double a, b;
-            for (int i = 1; i < m; i++)
+            var list = new List<int>();
+
+            int max = (int)Math.Floor(Math.Pow(n, (double)1 / 3));
+            for (int i = 1; i <= max; i++)
             {
-                a = Math.Pow(i, 3);
-                for (int j = 1; j < m; j++)
+                for (int j = i + 1; j <= max; j++)
                 {
-                    b = Math.Pow(j, 3);
-                    if (a + b == x)
-                    {
-                        if (flag)
-                            return true;
-                        else
-                            flag = true;
-                    }
+                    list.Add((int)Math.Pow(i, 3) + (int)Math.Pow(j, 3));
                 }
             }
-            return false;
+
+            return list
+                .GroupBy(x => x)
+                .Where(x => x.Count() > 1)
+                .Select(x => x.Key);
         }
     }
 }
