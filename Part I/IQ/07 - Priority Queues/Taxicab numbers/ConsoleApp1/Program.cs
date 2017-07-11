@@ -7,10 +7,11 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            int n = 10000;
+            int n = 42;
 
             Taxicab1(n);
             Taxicab2(n);
+            Taxicab3(n);
 
             Console.ReadKey();
         }
@@ -23,15 +24,14 @@ namespace ConsoleApp1
             {
                 for (int j = i; j <= n; j++)
                 {
-                    int x = (int)Math.Pow(i, 3) + (int)Math.Pow(j, 3);
-                    list.Add(x);
+                    list.Add(i * i * i + j * j * j);
                 }
             }
 
             // O(n^2*log(n^2)) time
             list.Sort();
 
-            // O(n^2)
+            // O(n^2) time
             int prev = -1;
             foreach (var next in list)
             {
@@ -51,7 +51,7 @@ namespace ConsoleApp1
             {
                 for (int j = i; j <= n; j++)
                 {
-                    int x = (int)Math.Pow(i, 3) + (int)Math.Pow(j, 3);
+                    int x = i * i * i + j * j * j;
                     if (!set.Add(x))
                     {
                         Console.WriteLine(x);
@@ -62,26 +62,26 @@ namespace ConsoleApp1
 
         public static void Taxicab3(int n)
         {
-            // O(n^2*log(2*n)) time and O(n) space
-            var pq = new MinPQ<int>();
+            // O(n) time and O(n) space
+            var pq = new MinPQ<SumOfCubes>();
             for (int i = 1; i <= n; i++)
             {
-                int x = (int)Math.Pow(i, 3);
-                pq.Push(2 * x);
+                pq.Push(new SumOfCubes(i, i));
             }
 
-            int prev = -1;
+            // O(n^2*logn) time
+            var sentinel = new SumOfCubes(0, 0);
             while (pq.Count > 0)
             {
-                int next = pq.Pop();
-                if (next == prev)
-                    Console.WriteLine(next);
-                else
-                {
+                var current = pq.Pop();
 
-                }
+                if (current.Result == sentinel.Result)
+                    Console.WriteLine($"{sentinel.A}^3+{sentinel.B}^3 = {current.A}^3+{current.B}^3 = {current.Result}");
 
-                // TODO
+                if (current.B <= n)
+                    pq.Push(new SumOfCubes(current.A, current.B + 1));
+
+                sentinel = current;
             }
         }
     }
