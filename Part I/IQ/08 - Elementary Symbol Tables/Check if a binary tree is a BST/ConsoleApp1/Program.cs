@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
@@ -7,35 +6,15 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            var root = new Node
-            {
-                Key = 15,
-                Left = new Node
-                {
-                    Key = 10,
-                    Left = new Node
-                    {
-                        Key = 7,
-                        Right = new Node { Key = 8 }
-                    },
-                    Right = new Node { Key = 13 }
-                },
-                Right = new Node
-                {
-                    Key = 18,
-                    Right = new Node
-                    {
-                        Key = 50,
-                        Left = new Node
-                        {
-                            Key = 20,
-                            Left = new Node { Key = 19 }
-                        }
-                    }
-                }
-            };
+            var tree = new Node(15,
+                left: new Node(10,
+                    left: new Node(7, right: new Node(8)),
+                    right: new Node(13)),
+                right: new Node(18,
+                    right: new Node(42,
+                        left: new Node(20, left: new Node(19)))));
 
-            Console.WriteLine(IsBST(root, int.MinValue, int.MaxValue));
+            Console.WriteLine(IsBST(tree, int.MinValue, int.MaxValue));
             Console.ReadKey();
         }
 
