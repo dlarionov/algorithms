@@ -6,16 +6,28 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            int n = 100;
             var rnd = new Random();
             var bst = new BST();
-            for (int i = 0; i < 100; i++)
+
+            for (int i = 0; i < n; i++)
             {
-                bst.Add(i);
+                bst.Add(rnd.Next(n));
             }
 
-            var root = bst.Root;
+            Traverse(bst.Root, (i) => Console.Write($"{i} "));
 
             Console.ReadKey();
+        }
+
+        public static void Traverse(Node node, Action<int> action)
+        {
+            var x = node;
+            while (x != null)
+            {
+                action(x.Key);
+                x = x.Right;
+            }
         }
 
         public static bool IsBST(Node node, int min = int.MinValue, int max = int.MaxValue)
