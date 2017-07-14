@@ -6,11 +6,16 @@
         public Node Left { get; set; }
         public Node Right { get; set; }
 
-        public Node(int key, Node left = null, Node right = null)
+        public Node(int key, Node left, Node right)
         {
             Key = key;
             Left = left;
             Right = right;
+        }
+
+        public override string ToString()
+        {
+            return $"{Key}";
         }
     }
 }
