@@ -4,16 +4,16 @@
     {
         public Node Root { get; private set; }
 
-        public bool Contains(int key)
+        public Node Get(int key)
         {
             var x = Root;
             while (x != null)
             {
                 if (key > x.Key) x = x.Right;
                 else if (key < x.Key) x = x.Left;
-                else return true;
+                else return x;
             }
-            return false;
+            return null;
         }
 
         public void Add(int key)
