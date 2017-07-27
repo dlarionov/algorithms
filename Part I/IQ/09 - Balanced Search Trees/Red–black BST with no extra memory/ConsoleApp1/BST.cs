@@ -14,8 +14,8 @@ namespace ConsoleApp1
             var x = Root;
             while (x != null)
             {
-                if (x.Compare(key) > 0) x = x.Right;
-                else if (x.Compare(key) < 0) x = x.Left;
+                if (x.Key.CompareTo(key) < 0) x = x.Right;
+                else if (x.Key.CompareTo(key) > 0) x = x.Left;
                 else return x;
             }
             return null;
@@ -29,28 +29,24 @@ namespace ConsoleApp1
         private Node<T> Put(Node<T> h, T key)
         {
             if (h == null)
-                return new Node<T> { Key = key }; // TODO it shoul be red!!!
+                return new Node<T> { Key = key, IsRed = true };
 
-            if (h.Compare(key) > 0)
-                h.Right = Put(h.Right, key);
-            else if (h.Compare(key) < 0)
-                h.Left = Put(h.Left, key);
+            if (h.Key.CompareTo(key) < 0) h.Right = Put(h.Right, key);
+            else if (h.Key.CompareTo(key) > 0) h.Left = Put(h.Left, key);
             else { }
 
-            h = Balance(h);
+            if (IsRed(h.Right) && !IsRed(h.Left)) h = RotateLeft(h);
+            if (IsRed(h.Left) && IsRed(h.Left.Left)) h = RotateRight(h);
+            if (IsRed(h.Left) && IsRed(h.Right)) FlipColors(h);
 
             return h;
         }
 
-        private Node<T> Balance(Node<T> h)
+        private bool IsRed(Node<T> x)
         {
-            if (Node<T>.IsRed(h.Right) && !Node<T>.IsRed(h.Left))
-                h = RotateLeft(h);
-            if (Node<T>.IsRed(h.Left) && Node<T>.IsRed(h.Left.Left))
-                h = RotateRight(h);
-            if (Node<T>.IsRed(h.Left) && Node<T>.IsRed(h.Right))
-                FlipColors(h);
-            return h;
+            if (x == null)
+                return false;
+            return x.IsRed;
         }
 
         private Node<T> RotateLeft(Node<T> h)
@@ -59,13 +55,8 @@ namespace ConsoleApp1
             var x = h.Right;
             h.Right = x.Left;
             x.Left = h;
-
-            if (!Node<T>.IsRed(h))
-            {
-                h.Swap();
-                x.Swap();
-            }
-
+            x.IsRed = h.IsRed;
+            h.IsRed = true;
             return x;
         }
 
@@ -75,13 +66,8 @@ namespace ConsoleApp1
             var x = h.Left;
             h.Left = x.Right;
             x.Right = h;
-
-            if (!Node<T>.IsRed(h))
-            {
-                h.Swap();
-                x.Swap();
-            }
-
+            x.IsRed = h.IsRed;
+            h.IsRed = true;
             return x;
         }
 
@@ -90,9 +76,9 @@ namespace ConsoleApp1
             //assert !isRed(h);
             //assert isRed(h.left);
             //assert isRed(h.right);
-            h.Swap();
-            h.Left.Swap();
-            h.Right.Swap();
+            h.IsRed = true;
+            h.Left.IsRed = false;
+            h.Right.IsRed = false;
         }
     }
 }
