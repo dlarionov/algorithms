@@ -7,13 +7,11 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             var bst = new BST<int>();
-
             for (int i = 0; i < 100; i++)
             {
                 bst.Put(i);
             }
-
-            Console.WriteLine(bst.Get(42));
+            Console.WriteLine(bst.Get(42).Key);
             Console.ReadLine();
         }
     }
