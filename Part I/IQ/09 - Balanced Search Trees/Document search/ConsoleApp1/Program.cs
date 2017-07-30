@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace ConsoleApp1
@@ -8,53 +7,55 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            string[] document = { "A", "B", "C", "D", "A", "A", "B", "B", "C", "C", "D", "D" };
-            string[] pattern = { "B", "D" };
-            var positions = GetPositions(document, pattern);
+            string[] document = { "AA", "A", "B", "C", "D", "A", "A", "B", "B", "C", "C", "D", "A", "C", "D" };
+            string[] pattern = { "A", "C", "D" };
 
-            List<int> lengths = new List<int>();
-            int x = positions[0][0];
-            int y = x;
-            int i = 1;
-            bool asc = true;
+            List<List<int>> positions = GetPositions(document, pattern);
+
+            int i = 0;
+            bool asc = true; // direction of the scan (forward or backward)
+            int x = positions[0][0]; // position of the first query word
+            int y = 0; // variable for storing position of the last query word
+            int len = 0; // variable for storing difference between minimum y and maximum x
+
             while (true)
             {
                 if (asc)
                 {
-                    var arr = positions[i++];
+                    var arr = positions[++i];
                     var j = FindIndexOfTheFirstElementGreatherThanX(arr, x);
                     if (j < 0)
                         break;
                     x = arr[j];
 
-                    if (i >= pattern.Length)
+                    if (i == pattern.Length - 1)
                     {
                         asc = false;
-                        i--;
                         y = x; // save last position
                     }
                 }
                 else
                 {
                     var arr = positions[--i];
-                    var j = FindIndexOfTheFirstElementLesserThanX(arr, x);
+                    var j = FindIndexOfTheLastElementLesserThanX(arr, x);
                     x = arr[j];
 
-                    if (i <= 0)
+                    if (i == 0)
                     {
                         asc = true;
-                        i++;
-                        lengths.Add(y - x);
+                        if (len == 0 || len > y - x)
+                            len = y - x;
+
+                        // take next element and scan forward again
+                        if (++j == arr.Count)
+                            break;
+                        x = arr[j];
                     }
                 }
             }
 
-            if (lengths.Count > 0)
-                Console.WriteLine(lengths.Min());
-            else
-                Console.WriteLine("path not found");
-
-            Console.ReadLine();
+            Console.WriteLine(len);
+            Console.ReadKey();
         }
 
         private static List<List<int>> GetPositions(string[] document, string[] pattern)
@@ -75,8 +76,7 @@ namespace ConsoleApp1
             return positions;
         }
 
-        // TODO it should be tested
-        private static int FindIndexOfTheFirstElementLesserThanX(List<int> list, int x)
+        private static int FindIndexOfTheLastElementLesserThanX(IList<int> list, int x)
         {
             int l = -1;
             int r = list.Count;
@@ -85,19 +85,18 @@ namespace ConsoleApp1
                 int m = l + ((r - l) / 2);
                 if (list[m] > x)
                 {
-                    l = m;
+                    r = m;
                 }
                 else
                 {
-                    r = m;
+                    l = m;
                 }
             }
 
-            return r < list.Count ? r : -1;
+            return l > -1 ? l : -1;
         }
 
-        // TODO it should be tested
-        private static int FindIndexOfTheFirstElementGreatherThanX(List<int> list, int x)
+        private static int FindIndexOfTheFirstElementGreatherThanX(IList<int> list, int x)
         {
             int l = -1;
             int r = list.Count;
