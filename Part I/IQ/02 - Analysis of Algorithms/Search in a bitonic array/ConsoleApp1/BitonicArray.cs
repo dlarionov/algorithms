@@ -72,42 +72,10 @@ namespace ConsoleApp1
             if (mid < index || mid > index + count)
                 throw new ArgumentException();
 
-            int result = BinarySearch(index, mid - index, value);
+            int result = Search.BinarySearch(_bitonic, index, mid - index, value);
             if (result < 0)
-                result = BinarySearch(mid, index + count - mid, value, false);
+                result = Search.BinarySearch(_bitonic, mid, index + count - mid, value, false);
             return result;
-        }
-
-
-        /// <summary>
-        /// Exactly log(n) on average and worst cases.
-        /// Note: System.Array.BinarySerch uses 2*log(n) in the worst case.
-        /// </summary>
-        /// <returns>array index</returns>
-        public int BinarySearch(int index, int count, int value, bool asc = true)
-        {
-            if (index < 0 || count < 0)
-                throw new ArgumentOutOfRangeException();
-            if (_bitonic.Length < index + count)
-                throw new ArgumentException();
-
-            if (count == 0)
-                return -1;
-
-            // "lo minus one" trick
-            int lo = index - 1;
-            int hi = index + count - 1;
-            int mid;
-            while (hi - lo > 1)
-            {
-                mid = lo + ((hi - lo) / 2);
-                if ((asc && _bitonic[mid] < value) || (!asc && _bitonic[mid] > value))
-                    lo = mid;
-                else
-                    hi = mid;
-            }
-
-            return _bitonic[hi] == value ? hi : -1;
         }
 
         /// <summary>
@@ -136,9 +104,9 @@ namespace ConsoleApp1
                 }
             }
 
-            return _bitonic[hi] == value 
+            return _bitonic[hi] == value
                 ? hi
-                : _bitonic[lo] == value 
+                : _bitonic[lo] == value
                     ? lo
                     : -1;
         }

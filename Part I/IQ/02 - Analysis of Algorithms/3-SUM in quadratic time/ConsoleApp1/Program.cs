@@ -7,7 +7,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             int[] arr = { -10, -7, -5, -4, -2, -1, 0, 1, 2, 3, 5, 6 };
-            // Array.Sort(arr);
+            Array.Sort(arr);
 
             for (int i = 0; i < arr.Length; i++)
             {
