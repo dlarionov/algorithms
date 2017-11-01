@@ -6,9 +6,7 @@ namespace UsefulThings
     {
         static void Main(string[] args)
         {
-            // var rnd = new Random();
 
-            Console.ReadKey();
         }
     }
 }

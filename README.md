@@ -1,6 +1,7 @@
 # Algorithms, 4th Edition by Robert Sedgewick and Kevin Wayne
 
-* [Coursera](https://www.coursera.org/learn/algorithms-part1)
+* [Coursera, Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1)
+* [Coursera, Algorithms, Part II](https://www.coursera.org/learn/algorithms-part2)
 * [Booksite](http://algs4.cs.princeton.edu)
 * [DrJava](http://www.drjava.org)
 
