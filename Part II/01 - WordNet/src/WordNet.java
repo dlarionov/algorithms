@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.DirectedCycle;
+import edu.princeton.cs.algs4.Topological;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,13 +64,11 @@ public class WordNet
             line = file.readLine();
         }
         
-        DirectedCycle finder = new DirectedCycle(graph);
-        if (finder.hasCycle())
+        Topological dag = new Topological(graph);
+        if (!dag.hasOrder())
         {
             throw new java.lang.IllegalArgumentException();
         }
-        
-        // TODO check the number of linked components
     }
     
     // returns all WordNet nouns
