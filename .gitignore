@@ -30,3 +30,5 @@ EclipseCompiler.txt
 /Part II/01 - WordNet/test/synsets5000-subgraph.txt
 /Part II/01 - WordNet/test/synsets10000-subgraph.txt
 /Part II/01 - WordNet/test/synsets50000-subgraph.txt
+/Part II/01 - WordNet/test/hypernyms1000-subgraph.txt
+/Part II/01 - WordNet/test/synsets1000-subgraph.txt
