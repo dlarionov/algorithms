@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.Queue;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,9 +10,7 @@ public class WordNet
 {
     private Digraph graph;
     private ArrayList<String> vertices;   
-    
-    // key is noun, value is synset ids devided by comma
-    private HashMap<String, String> map;
+    private HashMap<String, String> words;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms)
@@ -20,7 +19,7 @@ public class WordNet
             throw new java.lang.IllegalArgumentException();
         
         vertices = new ArrayList<String>();
-        map = new HashMap<String, String>();
+        words = new HashMap<String, String>();
         
         In file = new In(synsets);
         String line = file.readLine();
@@ -33,17 +32,15 @@ public class WordNet
             arr = arr[1].split("\\ ");            
             for(String noun : arr)
             {
-                if (map.containsKey(noun))
+                if (words.containsKey(noun))
                 {
-                    String ids = map.get(noun);
+                    String ids = words.get(noun);
                     ids += "," + Integer.toString(index);
-                    map.put(noun, ids);
-                    
-                    // StdOut.println(noun + " " + ids);
+                    words.put(noun, ids);
                 }
                 else
                 {
-                    map.put(noun, Integer.toString(index));
+                    words.put(noun, Integer.toString(index));
                 }
             }            
             line = file.readLine();
@@ -74,7 +71,7 @@ public class WordNet
     // returns all WordNet nouns
     public Iterable<String> nouns()
     {
-        return map.keySet();
+        return words.keySet();
     }
     
     // is the word a WordNet noun?
@@ -83,7 +80,7 @@ public class WordNet
         if (word == null)
             throw new java.lang.IllegalArgumentException();
         
-        return map.containsKey(word);
+        return words.containsKey(word);
     }
     
     // distance between nounA and nounB (defined below)
@@ -92,8 +89,56 @@ public class WordNet
         if (!isNoun(nounA) || !isNoun(nounA))
             throw new java.lang.IllegalArgumentException();
         
+        String[] a = words.get(nounA).split("\\,");
+        String[] b = words.get(nounA).split("\\,");
         
-        return 0;
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < a.length; i++)
+        {
+            for(int j = 0; j < b.length; j++)
+            {
+                min = Math.min(min, distance(i, j));
+            }
+        }       
+        
+        return min;
+    }
+    
+    private int hypernym(int x)
+    {
+        for(int i : graph.adj(x))
+        {
+            return i;
+        }
+        return -1;
+    }
+    
+    private Queue<Integer> path(int x)
+    {
+        Queue<Integer> q = new Queue<Integer>();
+        while(x > 0)
+        {
+            q.enqueue(x);
+            x = hypernym(x);
+        }
+        return q;
+    }
+    
+    private int distance(int v, int w)
+    {
+        if (v == w)
+            return 0;
+        
+        Queue<Integer> pathV = path(v);
+        Queue<Integer> pathW = path(w);
+        
+        while(pathV.size() > 0 && pathW.size() > 0)
+        {
+            if (pathV.dequeue() != pathW.dequeue())
+                break;                      
+        }      
+       
+        return pathV.size() + pathW.size() + 2;
     }
     
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
