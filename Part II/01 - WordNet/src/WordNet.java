@@ -97,6 +97,7 @@ public class WordNet
         ArrayList<Integer> idsW = words.get(nounB);
         
         int min = Integer.MAX_VALUE;
+        
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, idsW);
         for(int i = 0; i < idsV.size(); i++)
         {
@@ -116,13 +117,13 @@ public class WordNet
         ArrayList<Integer> idsV = words.get(nounA);
         ArrayList<Integer> idsW = words.get(nounB);
         
-        int dist;
         int min = Integer.MAX_VALUE;
+        
         Iterable<Integer> path = null;        
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, idsW);
         for(int i = 0; i < idsV.size(); i++)
         {
-            dist = paths.distTo(idsV.get(i));
+            int dist = paths.distTo(idsV.get(i));
             if (min > dist)
             {
                 min = dist;
@@ -149,12 +150,7 @@ public class WordNet
     private static Boolean contains(Iterable<Integer> data, int x)
     {
         for (int i : data) 
-        {
-            if (x == i) 
-            {
-                return true;
-            }
-        }
+            if (x == i) return true;
         return false;
     }
     
