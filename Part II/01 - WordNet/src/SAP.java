@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.Topological;
 import edu.princeton.cs.algs4.BreadthFirstPaths;
 import java.util.ArrayList;
 
@@ -15,12 +14,11 @@ public class SAP
     // constructor tak
     public SAP(Digraph G)
     {
-        if (G == null || !new Topological(G).hasOrder())
+        if (G == null)
         {
             throw new java.lang.IllegalArgumentException();
         }
         
-        // todo check dag here
         graph = new Graph(G.V());
         digraph = new Digraph(G.V());
         
@@ -42,7 +40,10 @@ public class SAP
         
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);        
         
-        return paths.distTo(w);
+        if (paths.hasPathTo(w))
+            return paths.distTo(w);
+        
+        return -1;
     }
     
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
@@ -64,12 +65,16 @@ public class SAP
         
         int min = Integer.MAX_VALUE;
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
+        int cnt = 0;
         for(int i : w)
         {
-            min = Math.min(min, paths.distTo(i));
+            if (paths.hasPathTo(i))
+            {
+                min = Math.min(min, paths.distTo(i));
+                cnt++;
+            }
         }
-
-        return min;
+        return cnt > 0 ? min : -1;
     }
     
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
