@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Digraph;
@@ -151,19 +152,16 @@ public class SAP
     // do unit testing of this class
     public static void main(String[] args)
     {
-        Digraph x = new Digraph(10);
-        x.addEdge(1, 0);
-        x.addEdge(2, 1);
-        x.addEdge(3, 1);
-        x.addEdge(8, 1);
-        x.addEdge(4, 2);
-        x.addEdge(6, 2);
-        x.addEdge(5, 4);
-        x.addEdge(7, 3);
-        x.addEdge(7, 8);
-        x.addEdge(9, 7);
-        SAP sap = new SAP(x);        
-        // StdOut.println(sap.length(5, 9));
-        StdOut.println(sap.ancestor(5, 9));
+        In in = new In(args[0]);
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+        while (!StdIn.isEmpty()) 
+        {
+            int v = StdIn.readInt();
+            int w = StdIn.readInt();
+            int length   = sap.length(v, w);
+            int ancestor = sap.ancestor(v, w);
+            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        }
     }
 }

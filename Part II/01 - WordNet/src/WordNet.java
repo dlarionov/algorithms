@@ -1,15 +1,12 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Topological;
-import edu.princeton.cs.algs4.BreadthFirstPaths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WordNet 
 {
-    private final Graph graph;
     private final Digraph digraph;
     private final ArrayList<String> vertices = new ArrayList<String>();   
     private final HashMap<String, ArrayList<Integer>> words = new HashMap<String, ArrayList<Integer>>();
@@ -49,7 +46,6 @@ public class WordNet
             index++;
         }
         
-        graph = new Graph(index);
         digraph = new Digraph(index);
                 
         file = new In(hypernyms);
@@ -59,7 +55,6 @@ public class WordNet
             arr = line.split("\\,");
             for(int i = 1; i < arr.length; i++)
             {
-                graph.addEdge(Integer.parseInt(arr[i]), Integer.parseInt(arr[0]));
                 digraph.addEdge(Integer.parseInt(arr[i]), Integer.parseInt(arr[0]));
             }                
             line = file.readLine();
@@ -93,18 +88,12 @@ public class WordNet
         if (!isNoun(nounA) || !isNoun(nounA))
             throw new java.lang.IllegalArgumentException();
         
-        ArrayList<Integer> idsV = words.get(nounA);
-        ArrayList<Integer> idsW = words.get(nounB);
+        ArrayList<Integer> v = words.get(nounA);
+        ArrayList<Integer> w = words.get(nounB);
         
-        int min = Integer.MAX_VALUE;
+        SAP sap = new SAP(digraph);
         
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, idsW);
-        for(int i = 0; i < idsV.size(); i++)
-        {
-            min = Math.min(min, paths.distTo(idsV.get(i)));
-        }
-        
-        return min;
+        return sap.length(v, w);
     }
     
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -114,44 +103,13 @@ public class WordNet
         if (!isNoun(nounA) || !isNoun(nounA))
             throw new java.lang.IllegalArgumentException();
         
-        ArrayList<Integer> idsV = words.get(nounA);
-        ArrayList<Integer> idsW = words.get(nounB);
+        ArrayList<Integer> v = words.get(nounA);
+        ArrayList<Integer> w = words.get(nounB);
         
-        int min = Integer.MAX_VALUE;
-        
-        Iterable<Integer> path = null;        
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, idsW);
-        for(int i = 0; i < idsV.size(); i++)
-        {
-            int dist = paths.distTo(idsV.get(i));
-            if (min > dist)
-            {
-                min = dist;
-                path = paths.pathTo(i);
-            }
-        }
-        
-        // todo use binary search for finding root in the path
-        ArrayList<Integer> arr = new ArrayList<Integer>();
-        for(int i : path)
-        {
-            arr.add(i);
-        }    
-        
-        int index = arr.size() - 1;
-        while(index > 0 && contains(digraph.adj(arr.get(index)), arr.get(index-1)))
-        {
-            index--;
-        }
+        SAP sap = new SAP(digraph);
+        int index = sap.ancestor(v, w);
         
         return vertices.get(index);
-    }
-    
-    private static Boolean contains(Iterable<Integer> data, int x)
-    {
-        for (int i : data) 
-            if (x == i) return true;
-        return false;
     }
     
     // do unit testing of this class
