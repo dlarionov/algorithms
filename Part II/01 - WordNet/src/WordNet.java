@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Topological;
 import java.util.ArrayList;
@@ -115,6 +115,6 @@ public class WordNet
     // do unit testing of this class
     public static void main(String[] args)
     {
-        WordNet wn = new WordNet("../test/synsets500-subgraph.txt", "../test/hypernyms100-subgraph.txt");    
+          
     }
 }
