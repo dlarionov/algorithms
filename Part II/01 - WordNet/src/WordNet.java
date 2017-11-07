@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.In;
-// import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Topological;
 import java.util.ArrayList;
@@ -22,12 +22,12 @@ public class WordNet
         String[] arr;
         ArrayList<Integer> ids;
         int index = 0;
-        while(line != null)
+        while (line != null)
         {
             arr = line.split("\\,");          
             vertices.add(arr[1]);
             arr = arr[1].split("\\ ");            
-            for(String noun : arr)
+            for (String noun : arr)
             {
                 if (words.containsKey(noun))
                 {
@@ -50,10 +50,10 @@ public class WordNet
                 
         file = new In(hypernyms);
         line = file.readLine();
-        while(line != null)
+        while (line != null)
         {
             arr = line.split("\\,");
-            for(int i = 1; i < arr.length; i++)
+            for (int i = 1; i < arr.length; i++)
             {
                 digraph.addEdge(Integer.parseInt(arr[i]), Integer.parseInt(arr[0]));
             }                
@@ -115,6 +115,10 @@ public class WordNet
     // do unit testing of this class
     public static void main(String[] args)
     {
-          
+          WordNet wn = new WordNet(args[0], args[1]);
+          for (String i : wn.nouns())
+          {
+              StdOut.println(i);
+          }
     }
 }

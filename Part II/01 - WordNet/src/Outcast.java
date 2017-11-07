@@ -3,12 +3,12 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Outcast 
 {
-    private final WordNet W;
+    private final WordNet wn;
     
     // constructor takes a WordNet object
     public Outcast(WordNet wordnet)         
     {
-        W = wordnet;
+        wn = wordnet;
     }
     
     // given an array of WordNet nouns, return an outcast
@@ -16,12 +16,12 @@ public class Outcast
     {
         int max = 0;
         String result = null;
-        for(String x : nouns)
+        for (String x : nouns)
         {
             int sum = 0;            
-            for(String y : nouns)
+            for (String y : nouns)
             {
-                sum += W.distance(x, y);
+                sum += wn.distance(x, y);
             }
             
             if (max < sum)

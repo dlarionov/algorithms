@@ -24,7 +24,7 @@ public class SAP
         
         for (int i = 0; i < G.V(); i++)
         {
-            for(int j : G.adj(i)) 
+            for (int j : G.adj(i)) 
             {
                 graph.addEdge(i, j);
                 digraph.addEdge(i, j);
@@ -66,7 +66,7 @@ public class SAP
         int min = Integer.MAX_VALUE;
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
         int cnt = 0;
-        for(int i : w)
+        for (int i : w)
         {
             if (paths.hasPathTo(i))
             {
@@ -86,7 +86,7 @@ public class SAP
         int min = Integer.MAX_VALUE;        
         Iterable<Integer> path = null;
         BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
-        for(int i : w)
+        for (int i : w)
         {
             int dist = paths.distTo(i);
             if (min > dist)
@@ -105,14 +105,14 @@ public class SAP
             return -1;
         
         ArrayList<Integer> arr = new ArrayList<Integer>();
-        for(int i : path)
+        for (int i : path)
         {
             arr.add(i);
         }
         
         // todo use binary search
         int index = arr.size() - 1;
-        while(index > 0 && contains(digraph.adj(arr.get(index)), arr.get(index-1)))
+        while (index > 0 && contains(digraph.adj(arr.get(index)), arr.get(index-1)))
         {
             index--;
         }
@@ -122,9 +122,9 @@ public class SAP
     
     private void validateVertex(int v) 
     {
-        int V = graph.V();
-        if (v < 0 || v >= V)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
+        int n = graph.V();
+        if (v < 0 || v >= n)
+            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (n-1));
     }
     
     private void validateVertices(Iterable<Integer> vertices) 
@@ -134,17 +134,17 @@ public class SAP
             throw new IllegalArgumentException("argument is null");
         }
         
-        int V = graph.V();
+        int n = graph.V();
         for (int v : vertices) 
         {
-            if (v < 0 || v >= V) 
+            if (v < 0 || v >= n) 
             {
-                throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
+                throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (n-1));
             }
         }
     }
     
-    private static Boolean contains(Iterable<Integer> list, int x)
+    private boolean contains(Iterable<Integer> list, int x)
     {
         for (int i : list) 
         {
