@@ -1,137 +1,43 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.BreadthFirstPaths;
-import java.util.ArrayList;
 
 public class SAP 
 {
-    private final Graph graph;
     private final Digraph digraph;
     
     // constructor tak
-    public SAP(Digraph G)
-    {
+    public SAP(Digraph G) {
         if (G == null)
-        {
-            throw new java.lang.IllegalArgumentException();
-        }
+            throw new java.lang.IllegalArgumentException();       
         
-        graph = new Graph(G.V());
         digraph = new Digraph(G.V());
         
-        for (int i = 0; i < G.V(); i++)
-        {
+        for (int i = 0; i < G.V(); i++) {
             for (int j : G.adj(i)) 
-            {
-                graph.addEdge(i, j);
                 digraph.addEdge(i, j);
-            }
         }
     }    
     
     // length of shortest ancestral path between v and w; -1 if no such path
-    public int length(int v, int w)
-    {
+    public int length(int v, int w) {
         return new DeluxeBFS(digraph, v, w).distance();
     }
     
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
-    public int ancestor(int v, int w)
-    {
+    public int ancestor(int v, int w) {
        return new DeluxeBFS(digraph, v, w).ancestor();
     }
     
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
-    public int length(Iterable<Integer> v, Iterable<Integer> w)
-    {
-        validateVertices(v);
-        validateVertices(w);
-        
-        int min = Integer.MAX_VALUE;
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
-        int cnt = 0;
-        for (int i : w)
-        {
-            if (paths.hasPathTo(i))
-            {
-                min = Math.min(min, paths.distTo(i));
-                cnt++;
-            }
-        }
-        return cnt > 0 ? min : -1;
+    public int length(Iterable<Integer> v, Iterable<Integer> w) {
+       return new DeluxeBFS(digraph, v, w).distance();
     }
     
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
-    public int ancestor(Iterable<Integer> v, Iterable<Integer> w)
-    {
-        validateVertices(v);
-        validateVertices(w);
-        
-        int min = Integer.MAX_VALUE;        
-        Iterable<Integer> path = null;
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
-        for (int i : w)
-        {
-            int dist = paths.distTo(i);
-            if (min > dist)
-            {
-                min = dist;
-                path = paths.pathTo(i);
-            }
-        }
-        
-        return ancestorByPath(path);
-    }
-    
-    private int ancestorByPath(Iterable<Integer> path)
-    {
-        if (path == null)
-            return -1;
-        
-        ArrayList<Integer> arr = new ArrayList<Integer>();
-        for (int i : path)
-        {
-            arr.add(i);
-        }
-        
-        // todo use binary search
-        int index = arr.size() - 1;
-        while (index > 0 && contains(digraph.adj(arr.get(index)), arr.get(index-1)))
-        {
-            index--;
-        }
-        
-        return arr.get(index);
-    }
-    
-    private void validateVertices(Iterable<Integer> vertices) 
-    {
-        if (vertices == null) 
-        {
-            throw new IllegalArgumentException("argument is null");
-        }
-        
-        int n = graph.V();
-        for (int v : vertices) 
-        {
-            if (v < 0 || v >= n) 
-            {
-                throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (n-1));
-            }
-        }
-    }
-    
-    private boolean contains(Iterable<Integer> list, int x)
-    {
-        for (int i : list) 
-        {
-            if (x == i) 
-                return true;
-        }
-        return false;
+    public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        return new DeluxeBFS(digraph, v, w).ancestor();
     }
     
     // do unit testing of this class

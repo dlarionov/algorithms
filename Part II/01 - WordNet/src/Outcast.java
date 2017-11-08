@@ -6,32 +6,27 @@ public class Outcast
     private final WordNet wn;
     
     // constructor takes a WordNet object
-    public Outcast(WordNet wordnet)         
-    {
+    public Outcast(WordNet wordnet) {
         wn = wordnet;
     }
     
     // given an array of WordNet nouns, return an outcast
-    public String outcast(String[] nouns)   
-    {
+    public String outcast(String[] nouns) {
         int max = 0;
         String result = null;
-        for (String x : nouns)
-        {
+        
+        for (String x : nouns) {
             int sum = 0;            
             for (String y : nouns)
-            {
                 sum += wn.distance(x, y);
-            }
             
-            if (max < sum)
-            {
+            if (max < sum) {
                 max = sum;
                 result = x;
             }
         }
         
-        return result;   
+        return result;
     }
     
     // see test client below
