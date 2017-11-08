@@ -39,95 +39,64 @@ public class DeluxeBFS
             return;
         }
         
-        Queue<Integer> q = new Queue<Integer>();
-        
+        Queue<Integer> q = new Queue<Integer>();        
         boolean[] m1 = new boolean[n];
         boolean[] m2 = new boolean[n];
         int[] d1 = new int[n];
         int[] d2 = new int[n];
         
-        m1[s] = true;                
-        m2[t] = true;        
+        m1[s] = true;        
         q.enqueue(s);
-        q.enqueue(t);       
-        
-        while (!q.isEmpty()) 
+                
+        while (!q.isEmpty())
         {
             int v = q.dequeue();
-            
             for (int w : G.adj(v))
             {
-                if ((m1[v] && m1[w]) || (m2[v] && m2[w]))
-                    break;
-                
-                if ((m1[v] && m2[w]) || (m2[v] && m1[w]))
+                if (!m1[w])
                 {
-                    int d;
-                    if (m1[v])
-                        d = d1[v] + d2[w] + 1;
-                    else
-                        d = d2[v] + d1[w] + 1;
-                    if (d < distance)
+                    if (w == t)
                     {
-                        StdOut.println("d: " + d + ", a: " + w);
-                        
-                        distance = d;
+                        distance = d1[v] + 1;
                         ancestor = w;
+                        
+                        // StdOut.println("w == t - d: " + distance + ", a: " + ancestor);
                     }
-                }
-                
-                if (m1[v])
-                {
+                    
                     m1[w] = true;
                     d1[w] = d1[v] + 1;
+                    q.enqueue(w);
                 }
-                else
+            }
+        }
+        
+        m2[t] = true;
+        q.enqueue(t);
+        
+        while (!q.isEmpty())
+        {
+            int v = q.dequeue();
+            for (int w : G.adj(v))
+            {
+                if (!m2[w])
                 {
+                    if (m1[w])
+                    {
+                        int d = d2[v] + d1[w] + 1;
+                        if (d < distance)
+                        {
+                            distance = d;
+                            ancestor = w;
+                            
+                            // StdOut.println("d < distance - d: " + distance + ", a: " + ancestor);
+                        }
+                    }
+                    
                     m2[w] = true;
                     d2[w] = d2[v] + 1;
+                    q.enqueue(w);
                 }
-                
-                q.enqueue(w);
-                StdOut.println("w: " + w);
             }
-            
-            // m1[v] - true for s and false for t
-//            if (m1[v])
-//            {
-//                for (int w : G.adj(v))
-//                {
-//                    if (m2[w])
-//                    {
-//                        ancestor = w;
-//                        distance = distTo[v] + distTo[w] + 1;
-//                        return;
-//                    }
-//                    else
-//                    {
-//                        m1[w] = true;
-//                        distTo[w] = distTo[v] + 1;
-//                        q.enqueue(w);
-//                    }
-//                }
-//            }
-//            else // if (m2[v])
-//            {
-//                for (int w : G.adj(v))
-//                {
-//                    if (m1[w])
-//                    {
-//                        ancestor = w;
-//                        distance = distTo[v] + distTo[w] + 1;
-//                        return;
-//                    }
-//                    else
-//                    {
-//                        m2[w] = true;
-//                        distTo[w] = distTo[v] + 1;
-//                        q.enqueue(w);
-//                    }
-//                }
-//            }
         }
     }   
 
@@ -169,7 +138,7 @@ public class DeluxeBFS
         }
         for (int v : vertices) 
         {
-            if (v < 0 || v >= n) 
+            if (v < 0 || v >= n)
             {
                 throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (n-1));
             }
