@@ -12,13 +12,17 @@ public class SAP
         if (G == null)
             throw new java.lang.IllegalArgumentException();       
         
-        digraph = new Digraph(G.V());
-        
+        digraph = copy(G);
+    }
+    
+    private Digraph copy(Digraph G) {
+        Digraph copy = new Digraph(G.V());        
         for (int i = 0; i < G.V(); i++) {
             for (int j : G.adj(i)) 
-                digraph.addEdge(i, j);
+                copy.addEdge(i, j);
         }
-    }    
+        return copy;
+    }
     
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
