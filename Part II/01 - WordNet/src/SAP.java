@@ -35,26 +35,13 @@ public class SAP
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w)
     {
-        validateVertex(v);
-        validateVertex(w);
-        
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);        
-        
-        if (paths.hasPathTo(w))
-            return paths.distTo(w);
-        
-        return -1;
+        return new DeluxeBFS(digraph, v, w).distance();
     }
     
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w)
     {
-        validateVertex(v);
-        validateVertex(w);
-        
-        BreadthFirstPaths paths = new BreadthFirstPaths(graph, v);
-        Iterable<Integer> path = paths.pathTo(w);
-        return ancestorByPath(path);
+       return new DeluxeBFS(digraph, v, w).ancestor();
     }
     
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
@@ -118,13 +105,6 @@ public class SAP
         }
         
         return arr.get(index);
-    }
-    
-    private void validateVertex(int v) 
-    {
-        int n = graph.V();
-        if (v < 0 || v >= n)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (n-1));
     }
     
     private void validateVertices(Iterable<Integer> vertices) 
