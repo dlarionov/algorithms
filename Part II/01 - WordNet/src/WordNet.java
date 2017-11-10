@@ -51,11 +51,18 @@ public class WordNet
             line = file.readLine();
         }
         
+        int cc = 0;
+        for (int v = 0; v < digraph.V(); v++) {
+            if (digraph.outdegree(v) == 0) 
+                cc++;
+        }
+        if (cc > 1)
+            throw new java.lang.IllegalArgumentException();
+        
         Topological dag = new Topological(digraph);
         if (!dag.hasOrder())
-        {
             throw new java.lang.IllegalArgumentException();
-        }
+        
     }
     
     // returns all WordNet nouns
