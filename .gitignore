@@ -11,24 +11,3 @@ EclipseCompiler.txt
 *.user
 *.suo
 *.log
-
-/Part I/02 - Deques and Randomized Queues/test/tale.txt
-/Part I/03 - Pattern Recognition/test/mystery10089.txt
-/Part I/03 - Pattern Recognition/test/input10000.txt
-/Part I/03 - Pattern Recognition/test/input8000.txt
-/Part I/05 - Kd-Trees/test/input*
-/Part I/05 - Kd-Trees/test/circle10000.txt
-/Part II/01 - WordNet/test/digraph-wordnet.txt
-/Part II/01 - WordNet/test/hypernyms.txt
-/Part II/01 - WordNet/test/hypernyms100K.txt
-/Part II/01 - WordNet/test/hypernyms200K.txt
-/Part II/01 - WordNet/test/hypernyms300K.txt
-/Part II/01 - WordNet/test/hypernyms5000-subgraph.txt
-/Part II/01 - WordNet/test/hypernyms10000-subgraph.txt
-/Part II/01 - WordNet/test/hypernyms50000-subgraph.txt
-/Part II/01 - WordNet/test/synsets.txt
-/Part II/01 - WordNet/test/synsets5000-subgraph.txt
-/Part II/01 - WordNet/test/synsets10000-subgraph.txt
-/Part II/01 - WordNet/test/synsets50000-subgraph.txt
-/Part II/01 - WordNet/test/hypernyms1000-subgraph.txt
-/Part II/01 - WordNet/test/synsets1000-subgraph.txt
