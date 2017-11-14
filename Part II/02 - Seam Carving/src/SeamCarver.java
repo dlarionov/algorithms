@@ -1,18 +1,30 @@
 import edu.princeton.cs.algs4.Picture;
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 import java.awt.Color;
 
 public class SeamCarver
 {
     private final Picture pic;
     private double[][] mx;
+    private Boolean flag; // true - vertical, false - horizontal
     
     public SeamCarver(Picture picture) {
         if (picture == null)
             throw new java.lang.IllegalArgumentException();
         
         pic = new Picture(picture);
-        compute();
+        computeMatrix();
+        flag = true;
+    }
+    
+    private void computeMatrix() {        
+        int width = pic.width();
+        int height = pic.height();         
+        mx = new double[width][height];      
+        for (int col = 0; col < width; col++) { 
+            for (int row = 0; row < height; row++)            
+                mx[col][row] = energy(col, row);
+        }
     }
     
     public Picture picture() {
@@ -49,24 +61,17 @@ public class SeamCarver
         return rx * rx + gx * gx + bx * bx;
     }    
     
-    private void compute() {        
-        int width = pic.width();
-        int height = pic.height();         
-        mx = new double[width][height];      
-        for (int col = 0; col < width; col++) { 
-            for (int row = 0; row < height; row++)            
-                mx[col][row] = energy(col, row);
-        }
-    }
-    
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
+        if (!flag)
+            traspose();        
         return seam();
     }
     
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        // TODO
+        if (flag)
+            traspose();        
         return seam();
     }   
     
