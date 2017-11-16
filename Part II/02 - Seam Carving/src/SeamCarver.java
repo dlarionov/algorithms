@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.Picture;
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 import java.awt.Color;
 
 public class SeamCarver
@@ -13,6 +13,8 @@ public class SeamCarver
         
         int width = picture.width();
         int height = picture.height();
+        
+        // (x, y) refers to the pixel in column x and row y, with pixel (0, 0) at the upper left corner
         
         img = new int[width][height];         
         for (int col = 0; col < width; col++) { 
@@ -31,19 +33,17 @@ public class SeamCarver
         
     public Picture picture() {
         int width = img.length;
-        int height = img[0].length;
-        
+        int height = img[0].length;        
         Picture pic = new Picture(width, height);
         for (int col = 0; col < width; col++) { 
             for (int row = 0; row < height; row++) {          
                 pic.setRGB(col, row, img[col][row]);
             }
         }
-        
         return pic;
     }
     
-    public int width(){
+    public int width() {
         return img.length;
     }
     
@@ -51,15 +51,13 @@ public class SeamCarver
         return img[0].length;
     }
     
-    //energy of pixel at column x and row y
+    // energy of pixel at column x and row y
     public double energy(int x, int y) {
-        if (x < 0 || y < 0 || x > img.length - 1 || y > img[0].length - 1 )
+        if (x < 0 || y < 0 || x > img.length - 1 || y > img[0].length - 1)
             throw new java.lang.IllegalArgumentException(); 
         
         if (x == 0 || y == 0 || x == img.length -1 || y == img[0].length - 1)
             return 1000;
-        
-        // (x, y) refers to the pixel in column x and row y, with pixel (0, 0) at the upper left corner
         
         double gx = grad(img[x-1][y], img[x+1][y]);
         double gy = grad(img[x][y-1], img[x][y+1]);
@@ -91,7 +89,7 @@ public class SeamCarver
         }
         
         if (row < 0)
-            return null;
+            return new int[0];
         
         int col = 0;
         int[] seam = new int[width];
@@ -104,6 +102,19 @@ public class SeamCarver
         seam[col] = row; // last col
         return seam;
     }   
+    
+    private int nextRow(int col, int row) {
+        double a = mx[col][row-1];
+        double b = mx[col][row];
+        double c = mx[col][row+1];
+        
+        if (a <= b && a <= c)
+            return row-1;
+        else if (b <= a && b <= c)
+            return row;
+        else // if (c <= a && c <= b)
+            return row+1;        
+    }
     
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
@@ -120,7 +131,7 @@ public class SeamCarver
         }
         
         if (col < 0)
-            return null;
+            return new int[0];
         
         int row = 0;
         int[] seam = new int[height];
@@ -132,19 +143,6 @@ public class SeamCarver
         }
         seam[row] = col; // last row
         return seam;
-    }
-    
-    private int nextRow(int col, int row) {
-        double a = mx[col][row-1];
-        double b = mx[col][row];
-        double c = mx[col][row+1];
-        
-        if (a <= b && a <= c)
-            return row-1;
-        else if (b <= a && b <= c)
-            return row;
-        else // if (c <= a && c <= b)
-            return row+1;        
     }
     
     private int nextCol(int col, int row) {
@@ -167,12 +165,11 @@ public class SeamCarver
         
         // todo  the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
         
-        for(int i = 0; i < img.length; i++) {
+        for (int i = 0; i < img.length; i++) {
             img[i] = removeElement(img[i], seam[i]);
-            // StdOut.println(seam[i] + " " + img[i].length);
         }
         
-        for(int i = 0; i < mx.length; i++) {
+        for (int i = 0; i < mx.length; i++) {
             mx[i] = removeElement(mx[i], seam[i]);
             if (seam[i] < mx[i].length)
                 mx[i][seam[i]] = energy(i, seam[i]);
