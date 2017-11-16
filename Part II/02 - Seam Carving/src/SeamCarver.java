@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.Picture;
-// import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdOut;
 import java.awt.Color;
 
 public class SeamCarver
@@ -134,17 +134,6 @@ public class SeamCarver
         return seam;
     }
     
-    private void traspose() {
-        int m = mx.length;
-        int n = mx[0].length;        
-        double[][] trasposed = new double[n][m];        
-        for (int x = 0; x < n; x++) {
-            for (int y = 0; y < m; y++)
-                trasposed[x][y] = mx[y][x];
-        }
-        mx = trasposed;
-    }
-    
     private int nextRow(int col, int row) {
         double a = mx[col][row-1];
         double b = mx[col][row];
@@ -171,15 +160,6 @@ public class SeamCarver
             return col+1;        
     }    
     
-    // stackoverflow.com/a/644764
-    private void removeElement(int[] arr, int removedIdx) {
-        System.arraycopy(arr, removedIdx + 1, arr, removedIdx, arr.length - 1 - removedIdx);
-    }
-    
-    private void removeElement(double[] arr, int removedIdx) {
-        System.arraycopy(arr, removedIdx + 1, arr, removedIdx, arr.length - 1 - removedIdx);
-    }
-    
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
         if (seam == null || img[0].length < 3 || seam.length != img.length)
@@ -188,16 +168,35 @@ public class SeamCarver
         // todo  the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
         
         for(int i = 0; i < img.length; i++) {
-            removeElement(img[i], seam[i]);
+            img[i] = removeElement(img[i], seam[i]);
+            // StdOut.println(seam[i] + " " + img[i].length);
         }
         
         for(int i = 0; i < mx.length; i++) {
-            removeElement(mx[i], seam[i]);
-            
-            mx[i][seam[i]] = energy(i, seam[i]);
-            
-            mx[i][seam[i]-1] = energy(i, seam[i]-1);
+            mx[i] = removeElement(mx[i], seam[i]);
+            if (seam[i] < mx[i].length)
+                mx[i][seam[i]] = energy(i, seam[i]);
+            if (seam[i] > 0)
+                mx[i][seam[i]-1] = energy(i, seam[i]-1);
         }
+    }
+    // stackoverflow.com/a/644764
+    private int[] removeElement(int[] source, int index) {
+        int[] result = new int[source.length - 1];
+        System.arraycopy(source, 0, result, 0, index);
+        if (source.length != index) {
+            System.arraycopy(source, index + 1, result, index, source.length - index - 1);
+        }        
+        return result;
+    }
+    
+    private double[] removeElement(double[] source, int index) {
+        double[] result = new double[source.length - 1];
+        System.arraycopy(source, 0, result, 0, index);
+        if (source.length != index) {
+            System.arraycopy(source, index + 1, result, index, source.length - index - 1);
+        }        
+        return result;
     }
     
     // remove vertical seam from current picture
@@ -205,7 +204,32 @@ public class SeamCarver
         if (seam == null || img.length < 3 || seam.length != img[0].length)
             throw new java.lang.IllegalArgumentException();
         
-        // todo
-        // validateSeam(seam); 
+        trasposeImg();
+        trasposeMx();
+        removeHorizontalSeam(seam);
+        trasposeImg();
+        trasposeMx();        
+    }
+    
+    private void trasposeImg() {
+        int m = img.length;
+        int n = img[0].length;        
+        int[][] trasposed = new int[n][m];        
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < m; y++)
+                trasposed[x][y] = img[y][x];
+        }
+        img = trasposed;
+    }
+    
+    private void trasposeMx() {
+        int m = mx.length;
+        int n = mx[0].length;        
+        double[][] trasposed = new double[n][m];        
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < m; y++)
+                trasposed[x][y] = mx[y][x];
+        }
+        mx = trasposed;
     }
 }
