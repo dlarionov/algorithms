@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class SeamCarver
 {
-    private final Picture pic;
+    private int[][] img;
     private double[][] mx;
     private Boolean flag; // true - vertical, false - horizontal
     
@@ -12,59 +12,79 @@ public class SeamCarver
         if (picture == null)
             throw new java.lang.IllegalArgumentException();
         
-        pic = new Picture(picture);
-        computeMatrix();
+        computeMatrix(picture);
         flag = true;
     }
     
-    private void computeMatrix() {        
+    private void computeMatrix(Picture pic) {        
         int width = pic.width();
-        int height = pic.height();         
-        mx = new double[width][height];      
+        int height = pic.height();
+        
+        img = new int[width][height];         
         for (int col = 0; col < width; col++) { 
-            for (int row = 0; row < height; row++)            
+            for (int row = 0; row < height; row++) {          
+                img[col][row] = pic.getRGB(col, row);
+            }
+        }
+        
+        mx = new double[width][height];  
+        for (int col = 0; col < width; col++) { 
+            for (int row = 0; row < height; row++) {         
                 mx[col][row] = energy(col, row);
+            }
         }
     }
     
     public Picture picture() {
+        int width = img.length;
+        int height = img[0].length;
+        
+        Picture pic = new Picture(width, height);
+        for (int col = 0; col < width; col++) { 
+            for (int row = 0; row < height; row++) {          
+                pic.setRGB(col, row, img[col][row]);
+            }
+        }
+        
         return pic;
     }
     
     public int width(){
-        return pic.width();
+        return img.length;
     }
     
     public int height() {
-        return pic.height();
+        return img[0].length;
     }
     
     //energy of pixel at column x and row y
     public double energy(int x, int y) {
-        if (x < 0 || y < 0 || x > pic.width() - 1 || y > pic.height() -1 )
+        if (x < 0 || y < 0 || x > img.length - 1 || y > img[0].length - 1 )
             throw new java.lang.IllegalArgumentException(); 
         
-        if (x == 0 || y == 0 || x == pic.width() -1 || y == pic.height() -1)
+        if (x == 0 || y == 0 || x == img.length -1 || y == img[0].length - 1)
             return 1000;
         
         // (x, y) refers to the pixel in column x and row y, with pixel (0, 0) at the upper left corner
         
-        double gx = grad(pic.get(x-1, y), pic.get(x+1, y));
-        double gy = grad(pic.get(x, y-1), pic.get(x, y+1));
+        double gx = grad(img[x-1][y], img[x+1][y]);
+        double gy = grad(img[x][y-1], img[x][y+1]);
         return Math.sqrt(gx + gy);
     }
     
-    private int grad(Color x, Color y) {        
+    private int grad(int xRGB, int yRGB) {
+        Color x = new Color(xRGB);
+        Color y = new Color(yRGB);
         int rx = x.getRed() - y.getRed();
         int gx = x.getGreen() - y.getGreen();
         int bx = x.getBlue() - y.getBlue();
         return rx * rx + gx * gx + bx * bx;
-    }    
+    }
     
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         if (!flag)
-            traspose();        
+            traspose();       
         return seam();
     }
     
@@ -89,7 +109,6 @@ public class SeamCarver
     private int[] seam() {
         double min = 1000;
         
-        // find smallest energy in the first row
         int col = -1;
         for (int i = 1; i <  mx.length - 1; i++) {
             if (min > mx[i][1]) {
@@ -128,7 +147,7 @@ public class SeamCarver
     
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null || pic.height() < 2 || seam.length != pic.width())
+        if (seam == null || img[0].length < 2 || seam.length != img.length)
             throw new java.lang.IllegalArgumentException();
         
         // todo the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
@@ -136,7 +155,7 @@ public class SeamCarver
     
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        if (seam == null || pic.width() < 2 || seam.length != pic.height())
+        if (seam == null || img.length < 2 || seam.length != img[0].length)
             throw new java.lang.IllegalArgumentException();
         
         // todo  the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
