@@ -6,24 +6,18 @@ public class SeamCarver
 {
     private int[][] img;
     private double[][] mx;
-    private Boolean flag; // true - vertical, false - horizontal
     
     public SeamCarver(Picture picture) {
         if (picture == null)
             throw new java.lang.IllegalArgumentException();
         
-        computeMatrix(picture);
-        flag = true;
-    }
-    
-    private void computeMatrix(Picture pic) {        
-        int width = pic.width();
-        int height = pic.height();
+        int width = picture.width();
+        int height = picture.height();
         
         img = new int[width][height];         
         for (int col = 0; col < width; col++) { 
             for (int row = 0; row < height; row++) {          
-                img[col][row] = pic.getRGB(col, row);
+                img[col][row] = picture.getRGB(col, row);
             }
         }
         
@@ -34,7 +28,7 @@ public class SeamCarver
             }
         }
     }
-    
+        
     public Picture picture() {
         int width = img.length;
         int height = img[0].length;
@@ -73,6 +67,7 @@ public class SeamCarver
     }
     
     private int grad(int xRGB, int yRGB) {
+        // todo use binary operations directly
         Color x = new Color(xRGB);
         Color y = new Color(yRGB);
         int rx = x.getRed() - y.getRed();
@@ -81,19 +76,63 @@ public class SeamCarver
         return rx * rx + gx * gx + bx * bx;
     }
     
-    // sequence of indices for vertical seam
-    public int[] findVerticalSeam() {
-        if (!flag)
-            traspose();       
-        return seam();
-    }
-    
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        if (flag)
-            traspose();        
-        return seam();
+        double min = 1000;
+        int width = mx.length;
+        int height = mx[0].length;
+        
+        int row = -1;
+        for (int i = 1; i <  height - 1; i++) {
+            if (min > mx[1][i]) {
+                min = mx[1][i];
+                row = i;
+            }
+        }
+        
+        if (row < 0)
+            return null;
+        
+        int col = 0;
+        int[] seam = new int[width];
+        seam[col++] = row; // 0 col
+        seam[col++] = row; // 1 col
+        while (col < width - 1) {
+            row = nextRow(col, row);
+            seam[col++] = row;
+        }
+        seam[col] = row; // last col
+        return seam;
     }   
+    
+    // sequence of indices for vertical seam
+    public int[] findVerticalSeam() {
+        double min = 1000;
+        int width = mx.length;
+        int height = mx[0].length;
+        
+        int col = -1;
+        for (int i = 1; i <  width - 1; i++) {
+            if (min > mx[i][1]) {
+                min = mx[i][1];
+                col = i;
+            }
+        }
+        
+        if (col < 0)
+            return null;
+        
+        int row = 0;
+        int[] seam = new int[height];
+        seam[row++] = col; // 0 row
+        seam[row++] = col; // 1 row
+        while (row < height - 1) {
+            col = nextCol(col, row);
+            seam[row++] = col;
+        }
+        seam[row] = col; // last row
+        return seam;
+    }
     
     private void traspose() {
         int m = mx.length;
@@ -106,33 +145,20 @@ public class SeamCarver
         mx = trasposed;
     }
     
-    private int[] seam() {
-        double min = 1000;
+    private int nextRow(int col, int row) {
+        double a = mx[col][row-1];
+        double b = mx[col][row];
+        double c = mx[col][row+1];
         
-        int col = -1;
-        for (int i = 1; i <  mx.length - 1; i++) {
-            if (min > mx[i][1]) {
-                min = mx[i][1];
-                col = i;
-            }
-        }
-        
-        if (col < 0)
-            return null;
-        
-        int row = 0;
-        int[] seam = new int[mx[0].length];
-        seam[row++] = col; // 0 row
-        seam[row++] = col; // 1 row
-        while (row < mx[0].length - 1) {
-            col = next(col, row);
-            seam[row++] = col;
-        }
-        seam[row] = col; // last row
-        return seam;
+        if (a <= b && a <= c)
+            return row-1;
+        else if (b <= a && b <= c)
+            return row;
+        else // if (c <= a && c <= b)
+            return row+1;        
     }
     
-    private int next(int col, int row) {
+    private int nextCol(int col, int row) {
         double a = mx[col-1][row];
         double b = mx[col][row];
         double c = mx[col+1][row];
@@ -145,19 +171,41 @@ public class SeamCarver
             return col+1;        
     }    
     
+    // stackoverflow.com/a/644764
+    private void removeElement(int[] arr, int removedIdx) {
+        System.arraycopy(arr, removedIdx + 1, arr, removedIdx, arr.length - 1 - removedIdx);
+    }
+    
+    private void removeElement(double[] arr, int removedIdx) {
+        System.arraycopy(arr, removedIdx + 1, arr, removedIdx, arr.length - 1 - removedIdx);
+    }
+    
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null || img[0].length < 2 || seam.length != img.length)
+        if (seam == null || img[0].length < 3 || seam.length != img.length)
             throw new java.lang.IllegalArgumentException();
         
-        // todo the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
+        // todo  the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
+        
+        for(int i = 0; i < img.length; i++) {
+            removeElement(img[i], seam[i]);
+        }
+        
+        for(int i = 0; i < mx.length; i++) {
+            removeElement(mx[i], seam[i]);
+            
+            mx[i][seam[i]] = energy(i, seam[i]);
+            
+            mx[i][seam[i]-1] = energy(i, seam[i]-1);
+        }
     }
     
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        if (seam == null || img.length < 2 || seam.length != img[0].length)
+        if (seam == null || img.length < 3 || seam.length != img[0].length)
             throw new java.lang.IllegalArgumentException();
         
-        // todo  the array is not a valid seam (i.e., either an entry is outside its prescribed range or two adjacent entries differ by more than 1)
+        // todo
+        // validateSeam(seam); 
     }
 }
