@@ -1,11 +1,11 @@
 import edu.princeton.cs.algs4.Picture;
-// import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdOut;
 import java.awt.Color;
 
 public class SeamCarver
 {
     private int[][] img;
-    private double[][] mx;
+    private double[][] mx;    
     
     public SeamCarver(Picture picture) {
         if (picture == null)
@@ -16,7 +16,7 @@ public class SeamCarver
         
         // (x, y) refers to the pixel in column x and row y, with pixel (0, 0) at the upper left corner
         
-        img = new int[width][height];         
+        img = new int[width][height];
         for (int col = 0; col < width; col++) { 
             for (int row = 0; row < height; row++) {          
                 img[col][row] = picture.getRGB(col, row);
@@ -74,89 +74,91 @@ public class SeamCarver
         return rx * rx + gx * gx + bx * bx;
     }
     
+    private double[][] distTo;
+    private int[][] edgeTo;
+    
     // sequence of indices for horizontal seam
-    public int[] findHorizontalSeam() {
-        double min = 1000;
+    public int[] findHorizontalSeam() {        
         int width = mx.length;
         int height = mx[0].length;
+                
+        distTo = new double[width][height];
+        edgeTo = new int[width][height];
         
-        int row = -1;
-        for (int i = 1; i <  height - 1; i++) {
-            if (min > mx[1][i]) {
-                min = mx[1][i];
-                row = i;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (i == 0) distTo[i][j] = mx[i][j];
+                else        distTo[i][j] = Double.POSITIVE_INFINITY;                
+                edgeTo[i][j] = -1;
             }
         }
         
-        if (row < 0)
-            return new int[0];
-        
-        int col = 0;
-        int[] seam = new int[width];
-        seam[col++] = row; // 0 col
-        seam[col++] = row; // 1 col
-        while (col < width - 1) {
-            row = nextRow(col, row);
-            seam[col++] = row;
+        for (int i = 0; i < width - 1; i++) {
+            for (int j = 0; j < height; j++) {
+                if (j > 0)
+                    relax(i, j, i+1, j-1);
+                relax(i, j, i+1, j);
+                if (j < height - 1)
+                    relax(i, j, i+1, j+1);
+            }
         }
-        seam[col] = row; // last col
-        return seam;
-    }   
-    
-    private int nextRow(int col, int row) {
-        double a = mx[col][row-1];
-        double b = mx[col][row];
-        double c = mx[col][row+1];
         
-        if (a <= b && a <= c)
-            return row-1;
-        else if (b <= a && b <= c)
-            return row;
-        else // if (c <= a && c <= b)
-            return row+1;        
+        StdOut.println("distTo:");
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++){
+                StdOut.print(distTo[i][j] + "  ");
+            }
+            StdOut.println("");
+        }
+        
+        StdOut.println("edgeTo:");
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++){
+                StdOut.print(edgeTo[i][j] + "  ");
+            }
+            StdOut.println("");
+        }
+        
+        int idx = 0;
+        double[] last = distTo[width-1];
+        double min = last[idx];        
+        for (int i = 1; i <  height; i++) {
+            if (min > last[i]) {
+                min = last[i];
+                idx = i;
+                
+                
+            }
+        }
+        
+        int cnt = width - 1;
+        int[] seam = new int[width];
+        while(cnt >= 0) {
+            seam[cnt] = idx;
+            idx = edgeTo[cnt--][idx];
+        }
+        
+        // todo use another class
+        distTo = null;
+        edgeTo = null;
+        
+        return seam;        
+    }
+    
+    private void relax(int vX, int vY, int wX, int wY)
+    {
+        //StdOut.println("(" + vX + "," + vY + ") -> (" + wX + "," + wY + ")");
+        if (distTo[wX][wY] > distTo[vX][vY] + mx[wX][wY])
+        {
+            distTo[wX][wY] = distTo[vX][vY] + mx[wX][wY];
+            edgeTo[wX][wY] = vY;
+        }
     }
     
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        double min = 1000;
-        int width = mx.length;
-        int height = mx[0].length;
-        
-        int col = -1;
-        for (int i = 1; i <  width - 1; i++) {
-            if (min > mx[i][1]) {
-                min = mx[i][1];
-                col = i;
-            }
-        }
-        
-        if (col < 0)
-            return new int[0];
-        
-        int row = 0;
-        int[] seam = new int[height];
-        seam[row++] = col; // 0 row
-        seam[row++] = col; // 1 row
-        while (row < height - 1) {
-            col = nextCol(col, row);
-            seam[row++] = col;
-        }
-        seam[row] = col; // last row
-        return seam;
-    }
-    
-    private int nextCol(int col, int row) {
-        double a = mx[col-1][row];
-        double b = mx[col][row];
-        double c = mx[col+1][row];
-        
-        if (a <= b && a <= c)
-            return col-1;
-        else if (b <= a && b <= c)
-            return col;
-        else // if (c <= a && c <= b)
-            return col+1;        
-    }    
+        return new int[0];
+    }       
     
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
