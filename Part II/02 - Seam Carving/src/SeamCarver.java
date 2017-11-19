@@ -6,9 +6,10 @@ public class SeamCarver
 {
     private int[][] img;
     private double[][] mx;
-    private double[][] distTo;
-    private int[][] edgeTo;
     private boolean transposed;
+    
+    private double[][] distTo;
+    private int[][] edgeTo;    
     
     public SeamCarver(Picture picture) {
         if (picture == null)
@@ -27,7 +28,7 @@ public class SeamCarver
         mx = new double[width][height];  
         for (int col = 0; col < width; col++) { 
             for (int row = 0; row < height; row++) {
-                mx[col][row] = energy(col, row);
+                mx[col][row] = energyInternal(col, row);
             }
         }
     }
@@ -54,6 +55,18 @@ public class SeamCarver
     
     // energy of pixel at column x and row y
     public double energy(int x, int y) {
+        if (x < 0 || y < 0 || x > width() - 1 || y > height() - 1)
+            throw new java.lang.IllegalArgumentException(); 
+        
+        if (x == 0 || y == 0 || x == width() -1 || y == height() - 1)
+            return 1000;
+        
+        double gx = transposed ? grad(img[y][x-1], img[y][x+1]) : grad(img[x-1][y], img[x+1][y]);
+        double gy = transposed ? grad(img[y-1][x], img[y+1][x]) : grad(img[x][y-1], img[x][y+1]);
+        return Math.sqrt(gx + gy);
+    }
+    
+    private double energyInternal(int x, int y) {
         if (x < 0 || y < 0 || x > img.length - 1 || y > img[0].length - 1)
             throw new java.lang.IllegalArgumentException(); 
         
@@ -157,7 +170,7 @@ public class SeamCarver
             idx = edgeTo[cnt--][idx];
         }
         
-        // todo subclass
+        // ugly code
         distTo = null;
         edgeTo = null;
         
@@ -166,7 +179,6 @@ public class SeamCarver
     
     private void relax(int vX, int vY, int wX, int wY)
     {
-        // todo deal with distTo and edgeTo
         if (distTo[wX][wY] > distTo[vX][vY] + mx[wX][wY])
         {
             distTo[wX][wY] = distTo[vX][vY] + mx[wX][wY];
@@ -199,7 +211,7 @@ public class SeamCarver
     }
     
     private void validateSeam(int[] seam) {
-        if (img[0].length < 3 || seam.length != img.length)
+        if (seam.length != img.length)
             throw new java.lang.IllegalArgumentException();
         
         int temp = -1;
@@ -223,9 +235,9 @@ public class SeamCarver
         for (int i = 0; i < mx.length; i++) {
             mx[i] = removeElement(mx[i], seam[i]);
             if (seam[i] < mx[i].length)
-                mx[i][seam[i]] = energy(i, seam[i]);
+                mx[i][seam[i]] = energyInternal(i, seam[i]);
             if (seam[i] > 0)
-                mx[i][seam[i]-1] = energy(i, seam[i]-1);
+                mx[i][seam[i]-1] = energyInternal(i, seam[i]-1);
         }
     }
     
