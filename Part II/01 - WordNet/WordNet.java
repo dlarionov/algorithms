@@ -2,14 +2,15 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.Bag;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class WordNet 
 {
-    private final Digraph digraph;
-    private final ArrayList<String> vertices = new ArrayList<String>();   
-    private final HashMap<String, ArrayList<Integer>> words = new HashMap<String, ArrayList<Integer>>();
+    private final ArrayList<String> vertices;   
+    private final HashMap<String, Bag<Integer>> words;
+    private final SAP sap;
     
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms)
@@ -17,30 +18,32 @@ public class WordNet
         if (synsets == null || hypernyms == null)
             throw new java.lang.IllegalArgumentException();
         
+        int idx = 0;
+        String[] arr;
+        vertices = new ArrayList<String>();
+        words = new HashMap<String, Bag<Integer>>();
+        
         In file = new In(synsets);
         String line = file.readLine();
-        String[] arr;
-        ArrayList<Integer> ids;
-        int index = 0;
         while (line != null) {
-            arr = line.split("\\,");          
+            arr = line.split("\\,");
             vertices.add(arr[1]);
-            arr = arr[1].split("\\ ");            
+            arr = arr[1].split("\\ ");
             for (String noun : arr) {
                 if (words.containsKey(noun)) {
-                    ids = words.get(noun);
-                    ids.add(index);
+                    Bag<Integer> ids = words.get(noun);
+                    ids.add(idx);
                 } else {
-                    ids = new ArrayList<Integer>();
-                    ids.add(index);
+                    Bag<Integer> ids = new Bag<Integer>();
+                    ids.add(idx);
                     words.put(noun, ids);
-                }                
+                }
             }            
             line = file.readLine();
-            index++;
+            idx++;
         }
         
-        digraph = new Digraph(index);
+        Digraph digraph = new Digraph(idx);
         
         file = new In(hypernyms);
         line = file.readLine();
@@ -61,8 +64,9 @@ public class WordNet
         
         Topological dag = new Topological(digraph);
         if (!dag.hasOrder())
-            throw new java.lang.IllegalArgumentException();
+            throw new java.lang.IllegalArgumentException();        
         
+        sap = new SAP(digraph);        
     }
     
     // returns all WordNet nouns
@@ -83,10 +87,10 @@ public class WordNet
         if (!isNoun(nounA) || !isNoun(nounA))
             throw new java.lang.IllegalArgumentException();
         
-        ArrayList<Integer> v = words.get(nounA);
-        ArrayList<Integer> w = words.get(nounB);        
+        Bag<Integer> v = words.get(nounA);
+        Bag<Integer> w = words.get(nounB);        
         
-        return new SAP(digraph).length(v, w);
+        return sap.length(v, w);
     }
     
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -95,10 +99,10 @@ public class WordNet
         if (!isNoun(nounA) || !isNoun(nounA))
             throw new java.lang.IllegalArgumentException();
         
-        ArrayList<Integer> v = words.get(nounA);
-        ArrayList<Integer> w = words.get(nounB);
+        Bag<Integer> v = words.get(nounA);
+        Bag<Integer> w = words.get(nounB);
         
-        int index = new SAP(digraph).ancestor(v, w);        
+        int index = sap.ancestor(v, w);        
         return vertices.get(index);
     }
     
