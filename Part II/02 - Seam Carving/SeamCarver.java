@@ -3,11 +3,8 @@ import java.awt.Color;
 
 public class SeamCarver
 {
-    private static final double DEFAULT_ENERGY = 1000;
-    
     private int[][] img;
-    private double[][] mx; // energy matrix
-    private boolean transposed; // state of both matrices    
+    private boolean transposed;
     
     public SeamCarver(Picture picture) {
         if (picture == null)
@@ -21,31 +18,7 @@ public class SeamCarver
             for (int y = 0; y < h; y++)
                 img[x][y] = picture.getRGB(x, y);
         }
-        
-        mx = new double[w][h];  
-        for (int x = 0; x < w; x++) { 
-            for (int y = 0; y < h; y++)
-                mx[x][y] = energyInternal(x, y);
-        }
     }
-    
-    private double energyInternal(int x, int y) {
-        if (x == 0 || y == 0 || x == img.length -1 || y == img[0].length - 1)
-            return DEFAULT_ENERGY;
-        
-        double gx = grad(img[x-1][y], img[x+1][y]);
-        double gy = grad(img[x][y-1], img[x][y+1]);
-        return Math.sqrt(gx + gy);
-    }
-    
-    private int grad(int xRGB, int yRGB) {
-        Color x = new Color(xRGB);
-        Color y = new Color(yRGB);
-        int rx = x.getRed() - y.getRed();
-        int gx = x.getGreen() - y.getGreen();
-        int bx = x.getBlue() - y.getBlue();
-        return rx * rx + gx * gx + bx * bx;
-    }    
     
     public Picture picture() {
         int w = width();
@@ -73,29 +46,45 @@ public class SeamCarver
         
         // todo dry energyInternal
         if (x == 0 || y == 0 || x == width() -1 || y == height() - 1)
-            return DEFAULT_ENERGY;
+            return 1000;
         
         double gx = transposed ? grad(img[y][x-1], img[y][x+1]) : grad(img[x-1][y], img[x+1][y]);
         double gy = transposed ? grad(img[y-1][x], img[y+1][x]) : grad(img[x][y-1], img[x][y+1]);
         return Math.sqrt(gx + gy);
     }
     
+    private int grad(int xRGB, int yRGB) {
+        Color x = new Color(xRGB);
+        Color y = new Color(yRGB);
+        int rx = x.getRed() - y.getRed();
+        int gx = x.getGreen() - y.getGreen();
+        int bx = x.getBlue() - y.getBlue();
+        return rx * rx + gx * gx + bx * bx;
+    }
+    
     private class HorizontalSP
     {
+        private final double[][] matrix;
         private final double[][] distTo;
         private final int[][] edgeTo;
         private final int[] path;
         
         public HorizontalSP() {
-            int w = mx.length;
-            int h = mx[0].length;
+            int w = img.length;
+            int h = img[0].length; 
+            
+            matrix = new double[w][h];  
+            for (int x = 0; x < w; x++) { 
+                for (int y = 0; y < h; y++)
+                    matrix[x][y] = energyInternal(x, y);
+            }
             
             distTo = new double[w][h];
             edgeTo = new int[w][h];
             
             for (int i = 0; i < w; i++) {
                 for (int j = 0; j < h; j++) {
-                    if (i == 0) distTo[i][j] = mx[i][j];
+                    if (i == 0) distTo[i][j] = matrix[i][j];
                     else        distTo[i][j] = Double.POSITIVE_INFINITY;
                 }
             }
@@ -126,8 +115,8 @@ public class SeamCarver
         }
         
         private void relax(int vX, int vY, int wX, int wY) {
-            if (distTo[wX][wY] > distTo[vX][vY] + mx[wX][wY]) {
-                distTo[wX][wY] = distTo[vX][vY] + mx[wX][wY];
+            if (distTo[wX][wY] > distTo[vX][vY] + matrix[wX][wY]) {
+                distTo[wX][wY] = distTo[vX][vY] + matrix[wX][wY];
                 edgeTo[wX][wY] = vY;
             }
         }
@@ -135,35 +124,41 @@ public class SeamCarver
         public int[] seam() {
             return path.clone();
         }
-    }
+    }    
     
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
         if (transposed)
-            traspose();
+            traspose();        
         return new HorizontalSP().seam();
     }
     
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         if (!transposed)
-            traspose();        
+            traspose();
         return new HorizontalSP().seam();
+    }
+    
+    private double energyInternal(int x, int y) {
+        if (x == 0 || y == 0 || x == img.length -1 || y == img[0].length - 1)
+            return 1000;
+        
+        double gx = grad(img[x-1][y], img[x+1][y]);
+        double gy = grad(img[x][y-1], img[x][y+1]);
+        return Math.sqrt(gx + gy);
     }
     
     private void traspose() {
         int m = img.length;
         int n = img[0].length;        
-        int[][] copyImg = new int[n][m];
-        double[][] copyMx = new double[n][m];
+        int[][] copy = new int[n][m];
         for (int x = 0; x < n; x++) {
             for (int y = 0; y < m; y++) {
-                copyImg[x][y] = img[y][x];
-                copyMx[x][y] = mx[y][x];
+                copy[x][y] = img[y][x];
             }
         }
-        img = copyImg;
-        mx = copyMx;    
+        img = copy;
         transposed = !transposed;
     }
     
@@ -203,36 +198,18 @@ public class SeamCarver
             if (i > 0 && Math.abs(x - tmp) > 1)
                 throw new java.lang.IllegalArgumentException();            
             tmp = x;
-        }   
+        }
     }
     
     private void removeSeamInternal(int[] seam) {
         for (int i = 0; i < img.length; i++) {
             img[i] = removeElement(img[i], seam[i]);
         }
-        
-        for (int i = 0; i < mx.length; i++) {
-            mx[i] = removeElement(mx[i], seam[i]);
-            if (seam[i] < mx[i].length)
-                mx[i][seam[i]] = energyInternal(i, seam[i]);
-            if (seam[i] > 0)
-                mx[i][seam[i]-1] = energyInternal(i, seam[i]-1);
-        }
     }
     
     // stackoverflow.com/a/644764
     private int[] removeElement(int[] source, int index) {
         int[] result = new int[source.length - 1];
-        System.arraycopy(source, 0, result, 0, index);
-        if (source.length != index) {
-            System.arraycopy(source, index + 1, result, index, source.length - index - 1);
-        }        
-        return result;
-    }
-    
-    // todo dry removeElement
-    private double[] removeElement(double[] source, int index) {
-        double[] result = new double[source.length - 1];
         System.arraycopy(source, 0, result, 0, index);
         if (source.length != index) {
             System.arraycopy(source, index + 1, result, index, source.length - index - 1);
