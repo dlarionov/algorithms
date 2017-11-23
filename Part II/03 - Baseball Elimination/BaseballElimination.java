@@ -1,35 +1,60 @@
 import edu.princeton.cs.algs4.StdOut;
+import java.util.HashMap;
 
 public class BaseballElimination
 {
-    // create a baseball division from given filename in format specified below
+    private final HashMap<String, Stat> map;
+    
     public BaseballElimination(String filename) {
         
+        map = new HashMap<String, Stat>();
+    }
+    
+    private class Stat
+    {
+        public int wins;
+        public int losses;
+        public int remaining;
+        
+        public Stat(int w, int l, int r) {
+            wins = w;
+            losses = l;
+            remaining = r;
+        }
     }
     
     // number of teams
     public int numberOfTeams() {
-        return 0;
+        return map.size();
     }
     
     // all teams
     public Iterable<String> teams() {
-        return null;
+        return map.keySet();
     }
     
     // number of wins for given team
     public int wins(String team) {
-        return 0;
+        if (team == null || !map.containsKey(team))
+            throw new java.lang.IllegalArgumentException();
+        
+        return map.get(team).wins;
     }
     
     // number of losses for given team
     public int losses(String team) {
-       return 0; 
+        if (team == null || !map.containsKey(team))
+            throw new java.lang.IllegalArgumentException();
+        
+        return map.get(team).losses; 
     }
     
     // number of remaining games for given team
     public int remaining(String team) {
-        return 0;
+        if (team == null || !map.containsKey(team))
+            throw new java.lang.IllegalArgumentException();
+        
+        return map.get(team).remaining;
     }
     
     // number of remaining games between team1 and team2
