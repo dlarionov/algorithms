@@ -10,7 +10,7 @@ public class BaseballElimination
     private final int[] w;
     private final int[] l;
     private final int[] r;
-    private final int[][] s;
+    private final int[][] g;
     
     public BaseballElimination(String filename) {
         In file = new In(filename);
@@ -20,7 +20,7 @@ public class BaseballElimination
         w = new int[len];
         l = new int[len];
         r = new int[len];
-        s = new int[len][len];
+        g = new int[len][len];
         
         String[] bufer;
         teams = new HashMap<String, Integer>();
@@ -35,7 +35,7 @@ public class BaseballElimination
             r[i] = Integer.parseInt(bufer[3]);            
             
             for (int j = 0; j < len; j++) {
-                s[i][j] = Integer.parseInt(bufer[j+4]);
+                g[i][j] = Integer.parseInt(bufer[j+4]);
             }
             
             // StdOut.println("name: " + bufer[0] + " w: " + bufer[1] + " l: " + bufer[2] + " r: " + bufer[3]);
@@ -77,7 +77,7 @@ public class BaseballElimination
     public int against(String team1, String team2) {
         if (team1 == null || team2 == null || !teams.containsKey(team1) || !teams.containsKey(team2))
             throw new java.lang.IllegalArgumentException();
-        return s[teams.get(team1)][teams.get(team2)];
+        return g[teams.get(team1)][teams.get(team2)];
     }
     
     // is given team eliminated?
@@ -85,27 +85,41 @@ public class BaseballElimination
         if (team == null || !teams.containsKey(team))
             throw new java.lang.IllegalArgumentException();
         
-        int idx = teams.get(team);
-        int games = w[idx] + r[idx];
+        int id = teams.get(team);
+        int wr = w[id] + r[id];
         
-        int v = teams.size();
-        v = (v * v - v) / 2 + 2;        
+        int n = teams.size() - 1;
+        // s + games without eliminated + teams + t
+        int v = 1 + (n * n - n) / 2 + teams.size() + 1;
         FlowNetwork nw = new FlowNetwork(v);
         
         int s = 0;
-        int t = v - 1;
+        int t = v - 1;        
         
-        int x = t;
-        for (int i : teams.values()) {
-            if (i == idx) 
+        int idx = 1;
+        for (int i = 0; i < teams.size(); i++) {
+            if (i == id)
                 continue;
             
-            int f = games - w[i];
-            if (f < 0)
-                return true; // simple elumination
+            int flow = wr - w[i];
+            if (flow < 0)
+                return true;
             
-            nw.addEdge(new FlowEdge(--x, t, f));
+            for (int j = i + 1; j < teams.size(); j++) {
+                if (j == id)
+                    continue;
+                
+                nw.addEdge(new FlowEdge(s, idx, g[i][j]));
+                nw.addEdge(new FlowEdge(idx, t - i - 1, Double.POSITIVE_INFINITY));
+                nw.addEdge(new FlowEdge(idx, t - j - 1, Double.POSITIVE_INFINITY));
+                
+                idx++;
+            }
+            
+            nw.addEdge(new FlowEdge(t - i - 1, t, flow));
         }
+        
+        StdOut.println(nw.toString());
         
         return false;
     }
