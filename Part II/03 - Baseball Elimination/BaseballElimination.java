@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.FlowNetwork;
 import edu.princeton.cs.algs4.FlowEdge;
+import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.HashMap;
 
@@ -8,7 +9,7 @@ public class BaseballElimination
 {
     private final HashMap<String, Integer> teams;
     private final int[] w;
-    private final int[] l;
+    private final int[] ls;
     private final int[] r;
     private final int[][] g;
     
@@ -18,7 +19,7 @@ public class BaseballElimination
         int len = Integer.parseInt(str);
         
         w = new int[len];
-        l = new int[len];
+        ls = new int[len];
         r = new int[len];
         g = new int[len][len];
         
@@ -31,14 +32,12 @@ public class BaseballElimination
             teams.put(bufer[0], i);
             
             w[i] = Integer.parseInt(bufer[1]);
-            l[i] = Integer.parseInt(bufer[2]);
+            ls[i] = Integer.parseInt(bufer[2]);
             r[i] = Integer.parseInt(bufer[3]);            
             
             for (int j = 0; j < len; j++) {
                 g[i][j] = Integer.parseInt(bufer[j+4]);
             }
-            
-            // StdOut.println("name: " + bufer[0] + " w: " + bufer[1] + " l: " + bufer[2] + " r: " + bufer[3]);
         }
     }
     
@@ -63,7 +62,7 @@ public class BaseballElimination
     public int losses(String team) {
         if (team == null || !teams.containsKey(team))
             throw new java.lang.IllegalArgumentException();
-        return l[teams.get(team)];
+        return ls[teams.get(team)];
     }
     
     // number of remaining games for given team
@@ -119,7 +118,12 @@ public class BaseballElimination
             nw.addEdge(new FlowEdge(t - i - 1, t, flow));
         }
         
-        StdOut.println(nw.toString());
+        FordFulkerson ff = new FordFulkerson(nw, s, t);
+        
+        for (FlowEdge e : nw.adj(s)) {
+            if (e.capacity() > e.flow())
+                return true;
+        }
         
         return false;
     }
