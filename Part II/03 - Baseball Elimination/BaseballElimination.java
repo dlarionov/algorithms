@@ -92,10 +92,12 @@ public class BaseballElimination
             return true;
         
         new FordFulkerson(nw, 0, nw.V()-1);
+        
         for (FlowEdge e : nw.adj(0)) {
             if (e.capacity() > e.flow())
                 return true;
-        }        
+        }
+        
         return false;
     }
     
