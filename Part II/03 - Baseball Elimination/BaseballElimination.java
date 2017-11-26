@@ -144,14 +144,18 @@ public class BaseballElimination
             throw new java.lang.IllegalArgumentException();
         
         FlowNetwork nw = network(map.get(team));
-        Bag<String> cut = new Bag<String>();
         if (nw == null) {
-            for (String n : names)
-                cut.add(n);
-            return cut;
+//            for (String n : names)
+//                cut.add(n);
+//            return cut;
+            
+            // todo return the team wich eliminates current
+            
+            return null;
         }
         
-        FordFulkerson ff = new FordFulkerson(nw, 0, nw.V()-1);        
+        FordFulkerson ff = new FordFulkerson(nw, 0, nw.V()-1);
+        Bag<String> cut = new Bag<String>();
         for (int i = 0; i < map.size(); i++) {
             if (ff.inCut(nw.V()-1 - i - 1))
                 cut.add(names[i]);
