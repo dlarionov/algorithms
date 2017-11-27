@@ -14,11 +14,12 @@ public class BaseballElimination
     private final int[] ls;
     private final int[] r;
     private final int[][] g;
+    private final int len;
     
     public BaseballElimination(String filename) {
         In file = new In(filename);
         String str = file.readLine();
-        int len = Integer.parseInt(str);
+        len = Integer.parseInt(str);
         
         names = new String[len];
         w = new int[len];
@@ -46,7 +47,7 @@ public class BaseballElimination
     
     // number of teams
     public int numberOfTeams() {
-        return map.size();
+        return len;
     }
     
     // all teams
@@ -87,54 +88,55 @@ public class BaseballElimination
         if (team == null || !map.containsKey(team))
             throw new java.lang.IllegalArgumentException();
         
-        FlowNetwork nw = network(map.get(team));
-        if (nw == null)
+        int id = map.get(team);
+        int winner = findSimpleWin(id);
+        if (winner > -1)
             return true;
         
-        new FordFulkerson(nw, 0, nw.V()-1);
+        FlowNetwork nw = createFlowNetwork(id);
+        new FordFulkerson(nw, 0, nw.V()-1); // todo ugly code        
         
         for (FlowEdge e : nw.adj(0)) {
             if (e.capacity() > e.flow())
                 return true;
-        }
-        
+        }        
         return false;
     }
     
-    private FlowNetwork network(int id) {
-        int wr = w[id] + r[id];
+    private int findSimpleWin(int id) {
+        for (int i = 0; i < len; i++) {
+            if (i == id)
+                continue;         
+            if (w[id] + r[id] - w[i] < 0)
+                return i;
+        }
+        return -1;
+    }
+    
+    private FlowNetwork createFlowNetwork(int id) {
+        int n = len - 1;
+        // s + nubner of games without eliminated team + number of teams + t
+        int v = 1 + (n * n - n) / 2 + len + 1; 
         
-        int n = map.size() - 1;
-        // s + games without eliminated + teams with eliminated + t
-        int v = 1 + (n * n - n) / 2 + map.size() + 1;
-        
-        FlowNetwork nw = new FlowNetwork(v);        
+        FlowNetwork nw = new FlowNetwork(v);
         int s = 0;
         int t = v - 1;        
-        
         int idx = 1;
-        for (int i = 0; i < map.size(); i++) {
+        for (int i = 0; i < len; i++) {
             if (i == id)
                 continue;
             
-            int flow = wr - w[i];
-            if (flow < 0)
-                return null; // todo ugly code for simple elimination case
-            
-            for (int j = i + 1; j < map.size(); j++) {
+            for (int j = i + 1; j < len; j++) {
                 if (j == id)
-                    continue;
-                
+                    continue;                
                 nw.addEdge(new FlowEdge(s, idx, g[i][j]));
                 nw.addEdge(new FlowEdge(idx, t - i - 1, Double.POSITIVE_INFINITY));
-                nw.addEdge(new FlowEdge(idx, t - j - 1, Double.POSITIVE_INFINITY));
-                
+                nw.addEdge(new FlowEdge(idx, t - j - 1, Double.POSITIVE_INFINITY));                
                 idx++;
             }
             
-            nw.addEdge(new FlowEdge(t - i - 1, t, flow));
-        }
-        
+            nw.addEdge(new FlowEdge(t - i - 1, t, w[id] + r[id] - w[i]));
+        }        
         return nw;
     }
     
@@ -143,23 +145,22 @@ public class BaseballElimination
         if (team == null || !map.containsKey(team))
             throw new java.lang.IllegalArgumentException();
         
-        FlowNetwork nw = network(map.get(team));
-        if (nw == null) {
-//            for (String n : names)
-//                cut.add(n);
-//            return cut;
-            
-            // todo return the team wich eliminates current
-            
-            return null;
+        Bag<String> cut = new Bag<String>();
+        
+        int id = map.get(team);
+        int winner = findSimpleWin(id);
+        if (winner > -1) {
+            cut.add(names[winner]);
+            return cut;
         }
         
+        FlowNetwork nw = createFlowNetwork(id);
         FordFulkerson ff = new FordFulkerson(nw, 0, nw.V()-1);
-        Bag<String> cut = new Bag<String>();
-        for (int i = 0; i < map.size(); i++) {
+        
+        for (int i = 0; i < len; i++) {
             if (ff.inCut(nw.V()-1 - i - 1))
                 cut.add(names[i]);
-        }        
+        } 
         return cut.size() > 0 ? cut : null;
     }
 }
