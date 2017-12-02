@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Queue;
 
-public class BoggleTrie {
+public class BoggleTrie
+{
     private static final int R = 26;
     private static final int offset = 65;
     
@@ -34,7 +36,7 @@ public class BoggleTrie {
         if (key == null) throw new IllegalArgumentException("argument to add() is null");
         root = add(root, key, 0);
     }
-
+    
     private Node add(Node x, String key, int d) {
         if (x == null) x = new Node();
         if (d == key.length()) {
@@ -53,28 +55,37 @@ public class BoggleTrie {
         return n;
     }
     
-//    public Iterable<String> keysWithPrefix(String prefix) {
-//        Queue<String> results = new Queue<String>();
-//        Node x = get(root, prefix, 0);
-//        collect(x, new StringBuilder(prefix), results);
-//        return results;
-//    }
-//
-//    private void collect(Node x, StringBuilder prefix, Queue<String> results) {
-//        if (x == null) return;
-//        if (x.isString) results.enqueue(prefix.toString());
-//        for (char c = 0; c < R; c++) {
-//            prefix.append(c);
-//            collect(x.next[c], prefix, results);
-//            prefix.deleteCharAt(prefix.length() - 1);
-//        }
-//    }
+    public Iterable<String> toList() {
+        return keysWithPrefix("");
+    }
     
-     public static void main(String[] args) {
-         String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-         for (int i = 0; i < ALPHABET.length(); i++){
-             int c = ALPHABET.charAt(i);        
-             StdOut.println(c);
-         }
-     }
+    public Iterable<String> keysWithPrefix(String prefix) {
+        Queue<String> results = new Queue<String>();
+        Node x = get(root, prefix, 0);
+        collect(x, new StringBuilder(prefix), results);
+        return results;
+    }
+    
+    public boolean hasKeysWithPrefix(String prefix) {
+        Node x = get(root, prefix, 0);
+        return x != null;
+    }
+    
+    private void collect(Node x, StringBuilder prefix, Queue<String> results) {
+        if (x == null) return;
+        if (x.isString) results.enqueue(prefix.toString());
+        for (int c = 0; c < R; c++) {
+            prefix.append((char)(c + offset));
+            collect(x.next[c], prefix, results);
+            prefix.deleteCharAt(prefix.length() - 1);
+        }
+    }
+    
+    public static void main(String[] args) {
+        String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (int i = 0; i < ALPHABET.length(); i++){
+            int c = ALPHABET.charAt(i);        
+            StdOut.println(c);
+        }
+    }
 }
