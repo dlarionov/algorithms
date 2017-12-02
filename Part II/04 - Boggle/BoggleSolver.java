@@ -13,7 +13,7 @@ public class BoggleSolver
         
         set = new BoggleTrie();
         for(String w : dictionary) {
-            set.add(w);
+            set.add(w.replace("QU", "Q"));
         }
     }
     
@@ -22,13 +22,13 @@ public class BoggleSolver
         if (board == null) 
             throw new IllegalArgumentException("argument to getAllValidWords() is null");        
         
-        BoggleTrie result = new BoggleTrie();        
+        BoggleTrie words = new BoggleTrie();        
         for (int i = 0; i < board.cols(); i++) {
             for (int j = 0; j < board.rows(); j++) {
-                dfs(board, i, j, result);
+                dfs(board, i, j, words);
             }
-        }        
-        return result.toList();
+        }
+        return words.toList();
     }
     
     private void dfs(BoggleBoard board, int x, int y, BoggleTrie result) {
@@ -53,7 +53,7 @@ public class BoggleSolver
             return;
         
         if (prefix.length() > 2 && set.contains(prefix))
-            result.add(prefix);
+            result.add(prefix.replace("Q","QU"));
         
         int[][] copy = new int[2][path[0].length + 1];
         System.arraycopy(path[0], 0, copy[0], 0, path[0].length);
@@ -77,7 +77,7 @@ public class BoggleSolver
         if (word == null) 
             throw new IllegalArgumentException("argument to scoreOf() is null");
         
-        if (set.contains(word)) {
+        if (set.contains(word.replace("QU", "Q"))) {
             switch (word.length()) {
                 case 0: return 0;
                 case 1: return 0;
