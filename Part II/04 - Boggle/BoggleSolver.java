@@ -32,20 +32,22 @@ public class BoggleSolver
     }
     
     private void dfs(BoggleBoard board, int x, int y, BoggleTrie result) {
-        boolean[][] marked = new boolean[board.cols()][board.rows()];        
-        int[][] path = new int[2][0];
-        dfs(board, x, y, path, "", result);
+        dfs(board, x, y, new int[2][0], "", result);
     }
     
-    private void dfs(BoggleBoard board, int x, int y, BoggleTrie result, boolean[][] marked, String prefix) {
+    private void dfs(BoggleBoard board, int x, int y, int[][] path, String prefix, BoggleTrie result) {
         int w = board.cols();
         int h = board.rows();
         
-        if (x < 0 || y < 0 || x > w-1 || y > h-1 || marked[x][y])
+        if (x < 0 || y < 0 || x > w-1 || y > h-1)
             return;
-               
+        
+        for (int i = 0; i < path[0].length; i++) {
+            if (x == path[0][i] && y == path[1][i])
+                return;
+        }
+        
         prefix += board.getLetter(x, y);
-        marked[x][y] = true;
         
         if (!set.hasKeysWithPrefix(prefix))
             return;
@@ -53,14 +55,20 @@ public class BoggleSolver
         if (prefix.length() > 2 && set.contains(prefix))
             result.add(prefix);
         
-        dfs(board, x-1, y-1, result, marked, prefix);
-        dfs(board, x, y-1, result, marked, prefix);
-        dfs(board, x+1, y-1, result, marked, prefix);
-        dfs(board, x-1, y, result, marked, prefix);
-        dfs(board, x+1, y, result, marked, prefix);
-        dfs(board, x-1, y+1, result, marked, prefix);
-        dfs(board, x, y+1, result, marked, prefix);
-        dfs(board, x+1, y+1, result, marked, prefix);        
+        int[][] copy = new int[2][path[0].length + 1];
+        System.arraycopy(path[0], 0, copy[0], 0, path[0].length);
+        System.arraycopy(path[1], 0, copy[1], 0, path[1].length);
+        copy[0][copy[0].length-1] = x;
+        copy[1][copy[1].length-1] = y;
+        
+        dfs(board, x-1, y-1, copy, prefix, result);
+        dfs(board, x, y-1, copy, prefix, result);
+        dfs(board, x+1, y-1, copy, prefix, result);
+        dfs(board, x-1, y, copy, prefix, result);
+        dfs(board, x+1, y, copy, prefix, result);
+        dfs(board, x-1, y+1, copy, prefix, result);
+        dfs(board, x, y+1, copy, prefix, result);
+        dfs(board, x+1, y+1, copy, prefix, result);        
     }    
     
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
