@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.Queue;
 public class BoggleTrie
 {
     private static final int R = 26;
-    private static final int offset = 65;
+    private static final int D = 65; // offset
     
     private Node root;
     private int n;
@@ -28,8 +28,8 @@ public class BoggleTrie
         if (x == null) return null;
         if (d == key.length()) return x;
         int c = key.charAt(d);
-        // if (c < offset || c > offset + R - 1) return null;
-        return get(x.next[c-offset], key, d+1);
+        // if (c < D || c > D + R - 1) return null;
+        return get(x.next[c-D], key, d+1);
     }
     
     public void add(String key) {
@@ -45,8 +45,8 @@ public class BoggleTrie
         }
         else {
             int c = key.charAt(d);
-            // if (c < offset || c > offset + R - 1) throw new IllegalArgumentException("argument to add() contains letter that is not in the alphabet");                
-            x.next[c-offset] = add(x.next[c-offset], key, d+1);
+            // if (c < D || c > D + R - 1) throw new IllegalArgumentException("argument to add() contains letter that is not in the alphabet");                
+            x.next[c-D] = add(x.next[c-D], key, d+1);
         }
         return x;
     }
@@ -75,7 +75,7 @@ public class BoggleTrie
         if (x == null) return;
         if (x.isString) results.enqueue(prefix.toString());
         for (int c = 0; c < R; c++) {
-            prefix.append((char)(c + offset));
+            prefix.append((char) (c+D));
             collect(x.next[c], prefix, results);
             prefix.deleteCharAt(prefix.length() - 1);
         }
@@ -83,7 +83,7 @@ public class BoggleTrie
     
     public static void main(String[] args) {
         String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (int i = 0; i < ALPHABET.length(); i++){
+        for (int i = 0; i < ALPHABET.length(); i++) {
             int c = ALPHABET.charAt(i);        
             StdOut.println(c);
         }

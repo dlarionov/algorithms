@@ -12,8 +12,8 @@ public class BoggleSolver
             throw new IllegalArgumentException("argument is null");
         
         set = new BoggleTrie();
-        for(String w : dictionary) {
-            set.add(w.replace("QU", "Q"));
+        for (String w : dictionary) {
+            set.add(w);
         }
     }
     
@@ -47,13 +47,14 @@ public class BoggleSolver
                 return;
         }
         
-        prefix += board.getLetter(x, y);
+        char letter = board.getLetter(x, y);
+        prefix += letter == 'Q' ? letter + "U" : letter;
         
         if (!set.hasKeysWithPrefix(prefix))
             return;
         
         if (prefix.length() > 2 && set.contains(prefix))
-            result.add(prefix.replace("Q","QU"));
+            result.add(prefix);
         
         int[][] copy = new int[2][path[0].length + 1];
         System.arraycopy(path[0], 0, copy[0], 0, path[0].length);
@@ -77,7 +78,7 @@ public class BoggleSolver
         if (word == null) 
             throw new IllegalArgumentException("argument to scoreOf() is null");
         
-        if (set.contains(word.replace("QU", "Q"))) {
+        if (set.contains(word)) {
             switch (word.length()) {
                 case 0: return 0;
                 case 1: return 0;
@@ -104,6 +105,6 @@ public class BoggleSolver
             score += solver.scoreOf(word);
         }
         StdOut.println("Score = " + score);        
-        StdOut.println(board.toString());
+        // StdOut.println(board.toString());
     }
 }
