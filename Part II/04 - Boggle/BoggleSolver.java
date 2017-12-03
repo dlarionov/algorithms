@@ -47,7 +47,7 @@ public class BoggleSolver
                 return;
         }
         
-        char letter = board.getLetter(x, y);
+        char letter = board.getLetter(y, x);
         prefix += letter == 'Q' ? letter + "U" : letter;
         
         if (!set.hasKeysWithPrefix(prefix))
@@ -104,7 +104,6 @@ public class BoggleSolver
             StdOut.println(word);
             score += solver.scoreOf(word);
         }
-        StdOut.println("Score = " + score);        
-        // StdOut.println(board.toString());
+        StdOut.println("Score = " + score);
     }
 }
