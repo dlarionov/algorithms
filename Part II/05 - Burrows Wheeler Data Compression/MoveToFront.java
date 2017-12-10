@@ -3,46 +3,42 @@ import edu.princeton.cs.algs4.BinaryStdOut;
 import java.util.LinkedList;
 
 public class MoveToFront {
-    private static final int CHAR_BITS = 8;
-    private static final int R = 256;
-    
     // apply move-to-front encoding, reading from standard input and writing to standard output
     public static void encode() {
-        LinkedList<Integer> chain = initChain();
-        
-        // todo use stream
+        LinkedList<Integer> chain = initChain();        
         String s = BinaryStdIn.readString();
+        int len = s.length();
+        char[] ch = new char[len];
         for (int i = 0; i < s.length(); i++) {
             int x = s.charAt(i);
             int idx = chain.indexOf(x);
-            BinaryStdOut.write((char) idx, CHAR_BITS);
+            ch[i] = (char) idx;
             int obj = chain.remove(idx);
             chain.add(0, obj);
         }
-        
+        BinaryStdOut.write(new String(ch));
         BinaryStdOut.close();
     }
     
     // apply move-to-front decoding, reading from standard input and writing to standard output
     public static void decode() {
-        LinkedList<Integer> chain = initChain();
-        
-        // todo use stream
+        LinkedList<Integer> chain = initChain();        
         String s = BinaryStdIn.readString();
-        for (int i = 0; i < s.length(); i++) {
+        int len = s.length();
+        char[] ch = new char[len];
+        for (int i = 0; i < len; i++) {
             int obj = chain.remove(s.charAt(i));
             chain.add(0, obj);
-            BinaryStdOut.write((char) obj, CHAR_BITS);
+            ch[i] = (char) obj;
         }
-        
+        BinaryStdOut.write(new String(ch));
         BinaryStdOut.close();
     }
     
     private static LinkedList<Integer> initChain() {
         LinkedList<Integer> list = new LinkedList<Integer>();
-        for (int i = 0; i < R; i++) {
+        for (int i = 0; i < 256; i++)
             list.add(i);
-        }
         return list;
     }
     

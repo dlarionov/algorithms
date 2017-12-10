@@ -65,6 +65,6 @@ public class CircularSuffixArray {
     public static void main(String[] args) {
         String s = args[0];
         CircularSuffixArray sfx = new CircularSuffixArray(s);
-        sfx.length();
+        assert sfx.length() > 0;
     }
 }

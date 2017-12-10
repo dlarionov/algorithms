@@ -1,11 +1,8 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
-import java.util.Arrays;
+import edu.princeton.cs.algs4.MSD;
 
 public class BurrowsWheeler {
-    private static final int CHAR_BITS = 8;
-    private static final int R = 256;
-    
     // apply Burrows-Wheeler transform, reading from standard input and writing to standard output
     public static void transform() {
         String s = BinaryStdIn.readString();
@@ -19,29 +16,34 @@ public class BurrowsWheeler {
             }
         }
         
+        char[] ch = new char[len];
         for (int i = 0; i < len; i++) {
             int j = sfx.index(i);
-            if (j == 0) BinaryStdOut.write(s.charAt(len-1), CHAR_BITS);
-            else        BinaryStdOut.write(s.charAt(j - 1), CHAR_BITS);
+            if (j == 0) ch[i] = s.charAt(len-1);
+            else        ch[i] = s.charAt(j - 1);
         }
         
+        BinaryStdOut.write(new String(ch));
         BinaryStdOut.close();        
     }
-
+    
     // apply Burrows-Wheeler inverse transform, reading from standard input and writing to standard output
-    public static void inverseTransform() {
+    public static void inverseTransform() { 
         int first = BinaryStdIn.readInt();
         String s = BinaryStdIn.readString();
         int len = s.length();
         
-        char[] sorted = s.toCharArray();
-        Arrays.sort(sorted);
+        int[] copy = new int[len];
+        for (int i = 0; i < len; i++)
+            copy[i] = s.charAt(i);
+        MSD.sort(copy);
         
-        int[] count = new int[R];
+        int[] count = new int[256];
         int[] next = new int[len];
         
+        // todo inverseTransform() is possibly n*R or n log n
         for (int i = 0; i < len; i++) {
-            int x = sorted[i];
+            int x = copy[i];
             for (int j = count[x]; j < len; j++) {
                 if (x == s.charAt(j)) {
                     count[x] = j+1; // next time start from j+1
@@ -51,13 +53,14 @@ public class BurrowsWheeler {
             }
         }
         
-        for (int i = 0, j = first; i < len; i++, j = next[j]) {
-            BinaryStdOut.write(sorted[j], CHAR_BITS);
-        }
+        char[] ch = new char[len];
+        for (int i = 0, j = first; i < len; i++, j = next[j])
+            ch[i] = (char) copy[j];
         
+        BinaryStdOut.write(new String(ch));
         BinaryStdOut.close();
     }
-
+    
     // if args[0] is '-', apply Burrows-Wheeler transform
     // if args[0] is '+', apply Burrows-Wheeler inverse transform
     public static void main(String[] args) {
