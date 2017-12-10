@@ -7,16 +7,15 @@ public class MoveToFront {
     public static void encode() {
         LinkedList<Integer> chain = initChain();        
         String s = BinaryStdIn.readString();
-        int len = s.length();
-        char[] ch = new char[len];
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             int x = s.charAt(i);
             int idx = chain.indexOf(x);
-            ch[i] = (char) idx;
+            sb.append((char) idx);
             int obj = chain.remove(idx);
             chain.add(0, obj);
         }
-        BinaryStdOut.write(new String(ch));
+        BinaryStdOut.write(sb.toString());
         BinaryStdOut.close();
     }
     
@@ -24,14 +23,13 @@ public class MoveToFront {
     public static void decode() {
         LinkedList<Integer> chain = initChain();        
         String s = BinaryStdIn.readString();
-        int len = s.length();
-        char[] ch = new char[len];
-        for (int i = 0; i < len; i++) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
             int obj = chain.remove(s.charAt(i));
             chain.add(0, obj);
-            ch[i] = (char) obj;
+            sb.append((char) obj);
         }
-        BinaryStdOut.write(new String(ch));
+        BinaryStdOut.write(sb.toString());
         BinaryStdOut.close();
     }
     

@@ -16,14 +16,14 @@ public class BurrowsWheeler {
             }
         }
         
-        char[] ch = new char[len];
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < len; i++) {
             int j = sfx.index(i);
-            if (j == 0) ch[i] = s.charAt(len-1);
-            else        ch[i] = s.charAt(j - 1);
+            if (j == 0) sb.append(s.charAt(len-1));
+            else        sb.append(s.charAt(j - 1));
         }
         
-        BinaryStdOut.write(new String(ch));
+        BinaryStdOut.write(sb.toString());
         BinaryStdOut.close();        
     }
     
@@ -53,11 +53,11 @@ public class BurrowsWheeler {
             }
         }
         
-        char[] ch = new char[len];
+        StringBuilder sb = new StringBuilder();
         for (int i = 0, j = first; i < len; i++, j = next[j])
-            ch[i] = (char) copy[j];
+            sb.append((char) copy[j]);
         
-        BinaryStdOut.write(new String(ch));
+        BinaryStdOut.write(sb.toString());
         BinaryStdOut.close();
     }
     
