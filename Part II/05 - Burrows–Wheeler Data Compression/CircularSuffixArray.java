@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
 
 public class CircularSuffixArray {
@@ -15,8 +14,7 @@ public class CircularSuffixArray {
         for (int i = 0; i < len; i++) {
             arr[i] = new SuffixNode(s, i);
         }
-        
-        // TODO use MSD
+
         Arrays.sort(arr);
         
         index = new int[len];
@@ -67,9 +65,6 @@ public class CircularSuffixArray {
     public static void main(String[] args) {
         String s = args[0];
         CircularSuffixArray sfx = new CircularSuffixArray(s);
-        int len = sfx.length();
-        for (int i = 0; i < len; i++) {
-            StdOut.println(sfx.index(i));
-        }
+        sfx.length();
     }
 }
