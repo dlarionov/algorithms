@@ -1,4 +1,4 @@
-# Algorithms, 4th Edition by Robert Sedgewick and Kevin Wayne
+# Algorithms, Robert Sedgewick and Kevin Wayne
 
 * [Coursera, Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1)
 * [Coursera, Algorithms, Part II](https://www.coursera.org/learn/algorithms-part2)
